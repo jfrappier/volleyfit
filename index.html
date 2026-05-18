@@ -5,85 +5,488 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VolleyFit: 30-Min Power</title>
     <style>
-        /* Paradigm Shift Inspired Styling */
+        /* HTML5 UP "Paradigm Shift" Inspired Styling */
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+
         :root {
-            --bg-color: #ffffff;
-            --text-main: #333333;
-            --text-muted: #888888;
-            --accent: #ed786a; /* Paradigm Shift's signature coral/orange */
-            --accent-hover: #d66558;
-            --border: #eeeeee;
+            --bg-body: #f2f2f2;
+            --bg-panel: #ffffff;
+            --text-main: #414f57;
+            --text-muted: #737373;
+            --accent: #ed786a; 
+            --accent-hover: #e86453;
+            --border: #e5e5e5;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: 80px; }
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-muted); 
+            font-family: 'Source Sans Pro', Helvetica, sans-serif;
+            font-weight: 400;
+            line-height: 1.75; 
+        }
 
-        header { padding: 40px 20px; text-align: center; border-bottom: 2px solid var(--border); }
-        header h1 { font-size: 2rem; letter-spacing: -1px; margin-bottom: 10px; }
-        header p { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+        /* Typography */
+        h1, h2, h3 { 
+            color: var(--text-main); 
+            font-weight: 700; 
+            letter-spacing: 0.075em; 
+            text-transform: uppercase; 
+        }
 
-        /* Navigation Tabs */
-        .nav { display: flex; justify-content: center; background: #f9f9f9; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .nav button { flex: 1; padding: 15px; background: none; border: none; font-size: 1rem; font-weight: bold; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.3s; }
-        .nav button.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+        /* Layout Structure */
+        #wrapper {
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
 
-        /* Container */
-        .container { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
-        .container.active { display: block; }
+        /* Left Header Panel */
+        #header {
+            width: 30%;
+            background: var(--bg-panel);
+            padding: 4em 3em;
+            border-right: solid 1px var(--border);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
 
-        /* Workout Cards */
-        .workout-section { margin-bottom: 30px; }
-        .workout-section h2 { font-size: 1.2rem; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        #header h1 {
+            font-size: 2.25em;
+            line-height: 1.2;
+            margin-bottom: 0.25em;
+        }
+
+        #header p {
+            color: var(--accent);
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 3em;
+        }
+
+        /* Navigation */
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        .nav button {
+            appearance: none;
+            background: transparent;
+            border: solid 1px var(--border);
+            border-radius: 4px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.8em;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            padding: 1.25em 2em;
+            text-align: center;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .nav button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .nav button.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #ffffff;
+        }
+
+        /* Right Content Panel */
+        #main {
+            width: 70%;
+            padding: 4em 5em;
+        }
+
+        .container { display: none; max-width: 800px; margin: 0 auto; }
+        .container.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Section Headings (Paradigm Shift Style) */
+        .workout-section h2, #calendar h2 {
+            font-size: 1.25em;
+            border-bottom: solid 2px var(--border);
+            padding-bottom: 0.75em;
+            margin-bottom: 2em;
+            position: relative;
+        }
+
+        .workout-section h2::after, #calendar h2::after {
+            content: '';
+            display: block;
+            width: 4em;
+            height: 2px;
+            background: var(--accent);
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+        }
+
+        .workout-section { margin-bottom: 4em; }
+
+        /* Exercise Cards */
+        .exercise-card {
+            background: var(--bg-panel);
+            border: solid 1px var(--border);
+            border-radius: 4px;
+            padding: 2em;
+            margin-bottom: 1.5em;
+            display: flex;
+            align-items: flex-start;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            cursor: pointer;
+        }
+
+        .exercise-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transform: translateY(-2px);
+        }
+
+        .exercise-card.completed {
+            background-color: #fafafa;
+            opacity: 0.6;
+            border-color: var(--border);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .exercise-card.completed .title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* Checkbox Styling */
+        .checkbox-container {
+            margin-right: 1.5em;
+            padding-top: 0.25em;
+        }
         
-        .exercise-card { display: flex; align-items: flex-start; padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.2s; }
-        .exercise-card.completed { background-color: #fcfcfc; opacity: 0.6; }
-        .exercise-card.completed .title { text-decoration: line-through; }
+        input[type="checkbox"] {
+            appearance: none;
+            width: 1.5em;
+            height: 1.5em;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+        }
 
-        /* Custom Checkbox */
-        .checkbox-container { margin-right: 15px; padding-top: 2px; }
-        input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--accent); cursor: pointer; }
+        input[type="checkbox"]:checked {
+            background-color: var(--accent);
+            border-color: var(--accent);
+        }
 
+        input[type="checkbox"]:checked::after {
+            content: '✔';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9em;
+        }
+
+        /* Card Content */
         .exercise-info { flex: 1; }
-        .title { font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px; }
-        .reps { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; display: inline-block; background: #f0f0f0; padding: 2px 8px; border-radius: 12px; }
-        .notes { font-size: 0.9rem; margin-bottom: 10px; }
+        .title { color: var(--text-main); font-weight: 700; font-size: 1.2em; display: block; margin-bottom: 0.25em; letter-spacing: 0.05em;}
+        .reps { font-size: 0.85em; font-weight: 600; color: var(--accent); margin-bottom: 1em; display: inline-block; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--accent); padding: 0.25em 0.75em; border-radius: 4px;}
+        .notes { font-size: 1em; margin-bottom: 1em; }
         
-        .video-link { display: inline-block; font-size: 0.85rem; color: var(--accent); text-decoration: none; font-weight: bold; }
-        .video-link:hover { text-decoration: underline; }
+        .video-link {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.85em;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.2s;
+        }
+        
+        .video-link:hover { color: var(--accent); }
+        .video-link::before { content: '▶'; margin-right: 0.5em; color: var(--accent); font-size: 0.8em; }
+
+        /* Month Progress Calendar View */
+        .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; }
+        .month-header button { background: none; border: solid 2px var(--border); padding: 0.75em 1.5em; cursor: pointer; border-radius: 4px; font-family: 'Source Sans Pro', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.8em; color: var(--text-main); transition: all 0.2s ease;}
+        .month-header button:hover { border-color: var(--accent); color: var(--accent); }
+        .month-header button:disabled { opacity: 0.3; cursor: not-allowed; border-color: var(--border); color: var(--text-main); }
+        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5em; text-align: center; }
+        .month-day-header { font-weight: 700; font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; padding-bottom: 1em; letter-spacing: 0.1em;}
+        .month-date { border: solid 1px var(--border); padding: 1.5em 0; border-radius: 4px; background: var(--bg-panel); font-size: 1em; font-weight: 600; color: var(--text-main); }
+        .month-date.completed { background: var(--accent); color: #ffffff; border-color: var(--accent); box-shadow: 0 2px 8px rgba(237, 120, 106, 0.3); }
+        .month-date.empty { background: transparent; border: none; }
+        
+        .btn-complete { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 3em; margin-bottom: 1em;}
+        .btn-complete:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; }
+
+        .btn-start { background: var(--text-main); color: #ffffff; border-color: var(--text-main); margin-top: 0; }
+        .btn-start:hover { background: var(--text-muted); border-color: var(--text-muted); color: #ffffff; }
+
+        /* Badge Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .modal-content {
+            background: var(--bg-panel);
+            padding: 3em 2em;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .modal-content h2 { margin-bottom: 0.5em; color: var(--text-main); }
+        .badge-svg { width: 120px; height: 120px; margin: 0 auto 1.5em auto; display: block; }
+        .badge-details { background: #f9f9f9; padding: 1.5em; border-radius: 4px; margin-bottom: 2em; border: 1px solid var(--border); }
+        .badge-details p { margin: 0.25em 0; font-weight: 600; color: var(--text-muted); font-size: 0.9em; letter-spacing: 0.05em; text-transform: uppercase;}
+        .badge-details p span { color: var(--text-main); }
+        
+        .btn-share { background: var(--accent); color: white; border-color: var(--accent); margin-bottom: 1em; width: 100%; margin-top: 0; padding: 1.25em;}
+        .btn-share:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: white;}
+        .btn-close-modal { background: transparent; color: var(--text-muted); border-color: var(--text-muted); width: 100%; padding: 1em; margin-top: 0; }
+        .btn-close-modal:hover { border-color: var(--text-main); color: var(--text-main); }
+
+        /* Disclaimer Modal Specifics */
+        #disclaimer-modal .modal-content { max-width: 550px; text-align: left; }
+        #disclaimer-modal h2 { text-align: center; color: var(--accent); margin-bottom: 1em; font-size: 1.5em; }
+        #disclaimer-modal p { font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6; }
+        #disclaimer-modal .strong-disclaimer { font-weight: 700; text-transform: uppercase; font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 2em; letter-spacing: 0.05em; }
+        .btn-agree { appearance: none; border: none; border-radius: 4px; background: var(--text-main); color: #ffffff; margin-top: 1.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
+        .btn-agree:hover { background: var(--text-muted); }
 
         /* Calendar View */
-        .calendar-day { padding: 15px; border-left: 4px solid var(--border); margin-bottom: 15px; background: #f9f9f9; border-radius: 0 8px 8px 0; cursor: pointer;}
-        .calendar-day.today { border-left-color: var(--accent); background: #fff0ee; }
-        .calendar-day h3 { font-size: 1rem; margin-bottom: 5px; }
-        .calendar-day p { font-size: 0.85rem; color: var(--text-muted); }
+        #calendar-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1em;
+        }
 
-        .btn-reset { display: block; width: 100%; padding: 15px; background: var(--text-main); color: #fff; text-align: center; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .calendar-day {
+            background: var(--bg-panel);
+            border: solid 1px var(--border);
+            border-left: solid 4px var(--border);
+            padding: 1.5em 2em;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calendar-day:hover {
+            border-left-color: var(--accent);
+            background: #fafafa;
+        }
+
+        .calendar-day.today {
+            border-left-color: var(--accent);
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(237, 120, 106, 0.15);
+        }
+
+        .calendar-day h3 { font-size: 1.1em; margin-bottom: 0.25em; }
+        .calendar-day p { font-size: 0.9em; margin: 0; }
+
+        /* Action Buttons */
+        .btn-reset {
+            display: block;
+            width: 100%;
+            appearance: none;
+            background: transparent;
+            border: solid 2px var(--border);
+            border-radius: 4px;
+            color: var(--text-main);
+            cursor: pointer;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            padding: 1.5em;
+            text-align: center;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            margin-top: 3em;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 980px) {
+            #wrapper { flex-direction: column; }
+            
+            #header {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 3em 2em;
+                border-right: none;
+                border-bottom: solid 1px var(--border);
+                text-align: center;
+            }
+
+            #header h1 { font-size: 2em; }
+            #header p { margin-bottom: 2em; }
+
+            .nav {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            #main {
+                width: 100%;
+                padding: 3em 2em;
+            }
+
+            .exercise-card {
+                padding: 1.5em;
+            }
+        }
+        
+        @media screen and (max-width: 480px) {
+            .nav { flex-direction: column; }
+            #main { padding: 2em 1.5em; }
+            .exercise-card { flex-direction: column; position: relative; }
+            .checkbox-container { position: absolute; top: 1.5em; right: 1.5em; margin: 0; }
+            .title { padding-right: 2em; }
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>VolleyFit</h1>
-        <p id="current-workout-title">30-Min Power Program</p>
-    </header>
+    <div id="wrapper">
+        <!-- Sidebar / Header -->
+        <header id="header">
+            <h1>VolleyFit</h1>
+            <p id="current-workout-title">30-Min Power Program</p>
+            <div class="nav">
+                <button class="active" onclick="switchTab('daily')">Today's Workout</button>
+                <button onclick="switchTab('schedule')">Schedule</button>
+                <button onclick="switchTab('history')">Calendar</button>
+                <button onclick="openPrivacyModal()">Data Privacy</button>
+            </div>
+        </header>
 
-    <div class="nav">
-        <button class="active" onclick="switchTab('daily')">Today's Workout</button>
-        <button onclick="switchTab('calendar')">Schedule</button>
+        <!-- Main Content Area -->
+        <main id="main">
+            <div id="daily" class="container active">
+                <div id="workout-controls" style="margin-bottom: 2.5em; text-align: center;">
+                    <button id="btn-start-workout" class="btn-reset btn-start" onclick="startWorkout()">Start Workout</button>
+                    <p id="workout-status" style="display: none; color: var(--accent); font-weight: 700; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.15em;"></p>
+                </div>
+                <div id="workout-content">
+                    <!-- Dynamic Workout Content Injected Here -->
+                </div>
+                <button class="btn-reset btn-complete" onclick="markWorkoutComplete()">Mark Workout Complete</button>
+                <button class="btn-reset" style="margin-top: 0;" onclick="resetDay()">Reset Today's Progress</button>
+            </div>
+
+            <div id="schedule" class="container">
+                <h2>Rotating Schedule</h2>
+                <p style="margin-bottom: 2em;">Select a day below to set it as your current active workout.</p>
+                <div id="schedule-content">
+                    <!-- Dynamic Calendar Content Injected Here -->
+                </div>
+            </div>
+
+            <div id="history" class="container">
+                <h2>Workout History</h2>
+                <p style="margin-bottom: 2em;">Track your completed workouts.</p>
+                <div class="month-header">
+                    <button onclick="changeMonth(-1)" id="btn-prev-month">&lt; Prev</button>
+                    <h3 id="month-year-display" style="margin:0; border:none; padding:0; letter-spacing: 0.1em;"></h3>
+                    <button onclick="changeMonth(1)" id="btn-next-month">Next &gt;</button>
+                </div>
+                <div class="month-grid" id="month-grid-content">
+                    <!-- Calendar days injected here -->
+                </div>
+            </div>
+        </main>
     </div>
 
-    <div id="daily" class="container active">
-        <div id="workout-content">
+    <!-- Badge Modal -->
+    <div id="badge-modal" class="modal-overlay">
+        <div class="modal-content">
+            <svg class="badge-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="50" cy="50" r="45" fill="#ed786a" />
+                <path d="M30 45 L45 60 L75 30" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                <text x="50" y="82" font-family="'Source Sans Pro', sans-serif" font-size="12" fill="white" font-weight="700" letter-spacing="1" text-anchor="middle">VOLLEYFIT</text>
+            </svg>
+            <h2>Workout Complete!</h2>
+            <p style="margin-bottom: 1.5em;">Great job crushing today's session.</p>
+            
+            <div class="badge-details">
+                <p id="badge-date-text"></p>
+                <p id="badge-time-text"></p>
             </div>
-        <button class="btn-reset" onclick="resetDay()">Reset Today's Progress</button>
+
+            <button id="btn-share-badge" class="btn-reset btn-share" onclick="shareBadge()">Share Workout</button>
+            <button class="btn-reset btn-close-modal" onclick="closeBadgeModal()">Close</button>
+        </div>
     </div>
 
-    <div id="calendar" class="container">
-        <h2>Rotating Schedule</h2>
-        <p style="font-size: 0.9rem; color: #888; margin-bottom: 20px;">Tap a day to set it as your current workout.</p>
-        <div id="calendar-content">
-            </div>
+    <!-- Medical Disclaimer Modal -->
+    <div id="disclaimer-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Medical Disclaimer & Terms of Use</h2>
+            <p class="strong-disclaimer">Please read carefully before proceeding.</p>
+            <p>The exercises, workouts, and information provided on this page are for <strong>educational and example purposes only</strong>. They are not intended as a substitute for professional medical advice, diagnosis, or treatment.</p>
+            <p><strong>Always consult with a qualified healthcare provider or physician</strong> before beginning any new exercise program or fitness regimen. You should be in good physical condition and be able to participate safely in the exercises.</p>
+            <p>By using this application, you understand and agree that there is an inherent risk of injury associated with participating in any physical activity. You assume all risks and voluntarily choose to participate at your own free will.</p>
+            <p>The creator(s), host(s), and authors of this page explicitly disclaim any liability, loss, or risk, personal or otherwise, which is incurred as a consequence, directly or indirectly, of the use and application of any of the contents herein. <strong>You agree to indemnify and hold harmless the creator(s) from any and all claims, demands, or causes of action arising out of your use of this site.</strong></p>
+            <button class="btn-agree" onclick="acceptDisclaimer()">I Understand and Agree</button>
+        </div>
+    </div>
+
+    <!-- Data Privacy Modal -->
+    <div id="privacy-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px; text-align: left;">
+            <h2 style="text-align: center; color: var(--accent); margin-bottom: 1em; font-size: 1.5em;">Data Privacy Policy</h2>
+            
+            <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>1. Local Storage Only:</strong> VolleyFit operates entirely within your web browser. All workout data, completion dates, and preferences are stored exclusively in your device's Local Storage. The author does not collect, transmit, track, or store any of your personal information, health data, or location data.</p>
+            
+            <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>2. Third-Party Hosting:</strong> This application is hosted via GitHub Pages. While the application itself does not track you, GitHub may collect standard web server logs (including IP addresses, browser types, and referring pages) as part of their standard hosting infrastructure. Please review GitHub's Privacy Statement for more details.</p>
+            
+            <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>3. GDPR, CCPA, & Massachusetts Law Compliance:</strong> Because we do not collect, process, sell, or control your personal data or Personally Identifiable Information (PII), we inherently align with the data minimization principles of the General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), and Massachusetts Data Security Law (MGL c. 93H / 201 CMR 17.00). You retain 100% control over your data. To permanently delete all your data, simply clear your browser's local storage or cache.</p>
+            
+            <button class="btn-reset btn-close-modal" style="margin-top: 1.5em;" onclick="closePrivacyModal()">Close Privacy Policy</button>
+        </div>
     </div>
 
     <script>
@@ -144,15 +547,36 @@
                             { id: 'c4', name: 'Plank w/ Shoulder Taps', reps: '40 seconds', notes: 'Anti-rotation core hold.', video: 'Plank with Shoulder Taps' }
                         ]
                     }
+                ],
+            },
+            'D': {
+                name: 'Workout D: Core & Swing Mechanics',
+                blocks: [
+                    {
+                        title: 'Volleyball Core (3 Rounds - Rest 45s)',
+                        exercises: [
+                            { id: 'd1', name: 'Hollow Body Hold', reps: '30 seconds', notes: 'Mimics pre-swing mid-air tension. Press lower back into floor.', video: 'Hollow Body Hold' },
+                            { id: 'd2', name: 'Seated Rotational Twists', reps: '15 reps / side', notes: 'Focus on torso rotation to simulate arm swing torque.', video: 'Russian Twists' },
+                            { id: 'd3', name: 'Bird-Dog', reps: '10 reps / side', notes: 'Slow and controlled. Builds back and core stability.', video: 'Bird Dog Exercise' }
+                        ]
+                    },
+                    {
+                        title: 'Swing Mechanics (Focus on Form - Rest as needed)',
+                        exercises: [
+                            { id: 'd4', name: 'Half-Kneeling Swings (Left Knee Up)', reps: '20 reps', notes: 'Left knee bent, right knee on floor. Focus on elbow draw and torque.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd5', name: 'Half-Kneeling Swings (Right Knee Up)', reps: '20 reps', notes: 'Right knee bent, left knee on floor. Maintain high elbow.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd6', name: 'Tall Kneeling Swings', reps: '20 reps', notes: 'Both knees on floor. Engage core to snap through the swing.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' }
+                        ]
+                    }
                 ]
             }
         };
 
         const schedule = [
             { day: 'Monday', workout: 'A' },
-            { day: 'Tuesday', workout: 'Rest/Run' },
+            { day: 'Tuesday', workout: 'D' }, 
             { day: 'Wednesday', workout: 'B' },
-            { day: 'Thursday', workout: 'Rest/Run' },
+            { day: 'Thursday', workout: 'D' }, 
             { day: 'Friday', workout: 'C' },
             { day: 'Saturday', workout: 'Rest/Run' },
             { day: 'Sunday', workout: 'Rest/Run' }
@@ -161,10 +585,14 @@
         // State Management
         let currentDayIndex = parseInt(localStorage.getItem('currentDayIndex')) || 0;
         let completedExercises = JSON.parse(localStorage.getItem('completedExercises')) || {};
+        let completedDates = JSON.parse(localStorage.getItem('completedDates')) || {};
+        let historyCalDate = new Date();
+        let activeWorkoutStart = localStorage.getItem('activeWorkoutStart') || null;
 
         function saveState() {
             localStorage.setItem('currentDayIndex', currentDayIndex);
             localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
+            localStorage.setItem('completedDates', JSON.stringify(completedDates));
         }
 
         // UI Functions
@@ -174,6 +602,11 @@
             
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
+            
+            // Scroll to top on mobile when switching tabs
+            if(window.innerWidth <= 980) {
+                window.scrollTo({ top: document.getElementById('main').offsetTop - 20, behavior: 'smooth' });
+            }
         }
 
         function toggleExercise(id, cardElement) {
@@ -181,8 +614,32 @@
             saveState();
             if(completedExercises[id]) {
                 cardElement.classList.add('completed');
+                cardElement.querySelector('input').checked = true;
+                checkAndMarkComplete();
             } else {
                 cardElement.classList.remove('completed');
+                cardElement.querySelector('input').checked = false;
+            }
+        }
+
+        function checkAndMarkComplete() {
+            const currentWorkoutKey = schedule[currentDayIndex].workout;
+            const workout = workouts[currentWorkoutKey];
+            if (!workout) return;
+
+            let allChecked = true;
+            for (const block of workout.blocks) {
+                for (const ex of block.exercises) {
+                    if (!completedExercises[ex.id]) {
+                        allChecked = false;
+                        break;
+                    }
+                }
+                if (!allChecked) break;
+            }
+
+            if (allChecked) {
+                markWorkoutComplete();
             }
         }
 
@@ -196,6 +653,8 @@
                         });
                     });
                 }
+                activeWorkoutStart = null;
+                localStorage.removeItem('activeWorkoutStart');
                 saveState();
                 renderDaily();
             }
@@ -205,10 +664,145 @@
             currentDayIndex = index;
             saveState();
             renderDaily();
-            renderCalendar();
-            switchTab('daily');
+            renderSchedule();
+            
+            // Re-trigger the active tab state for Daily
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('daily').classList.add('active');
             document.querySelectorAll('.nav button')[0].classList.add('active');
-            document.querySelectorAll('.nav button')[1].classList.remove('active');
+
+            if(window.innerWidth <= 980) {
+                window.scrollTo({ top: document.getElementById('main').offsetTop - 20, behavior: 'smooth' });
+            }
+        }
+
+        function startWorkout() {
+            if (!activeWorkoutStart) {
+                activeWorkoutStart = new Date().toISOString();
+                localStorage.setItem('activeWorkoutStart', activeWorkoutStart);
+                updateWorkoutStatus();
+            }
+        }
+
+        function updateWorkoutStatus() {
+            const controlsDiv = document.getElementById('workout-controls');
+            const startBtn = document.getElementById('btn-start-workout');
+            const statusTxt = document.getElementById('workout-status');
+
+            const workout = workouts[schedule[currentDayIndex].workout];
+
+            if (!workout) {
+                if(controlsDiv) controlsDiv.style.display = 'none';
+                return;
+            } else {
+                if(controlsDiv) controlsDiv.style.display = 'block';
+            }
+
+            if (activeWorkoutStart) {
+                startBtn.style.display = 'none';
+                statusTxt.style.display = 'block';
+                const startTime = new Date(activeWorkoutStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                statusTxt.innerText = `Workout started at ${startTime}`;
+            } else {
+                startBtn.style.display = 'block';
+                statusTxt.style.display = 'none';
+            }
+        }
+
+        function markWorkoutComplete() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+
+            const displayDate = today.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+            let startTimeStr = "N/A";
+            let endTimeStr = today.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            let durationText = "";
+            let mins = 0;
+
+            if (activeWorkoutStart) {
+                const start = new Date(activeWorkoutStart);
+                startTimeStr = start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const durationMs = today - start;
+                mins = Math.max(1, Math.floor(durationMs / 60000));
+                durationText = ` (${mins} min)`;
+            }
+
+            completedDates[dateStr] = {
+                completed: true,
+                startTime: activeWorkoutStart,
+                endTime: today.toISOString()
+            };
+            
+            activeWorkoutStart = null;
+            localStorage.removeItem('activeWorkoutStart');
+
+            saveState();
+            renderHistoryCalendar();
+            updateWorkoutStatus();
+            
+            // Populate and Show Badge Modal
+            document.getElementById('badge-date-text').innerHTML = `Date: <span>${displayDate}</span>`;
+            if (startTimeStr !== "N/A") {
+                document.getElementById('badge-time-text').innerHTML = `Time: <span>${startTimeStr} - ${endTimeStr}</span><br><span style="color:var(--accent); font-size:0.85em; display:block; margin-top:0.5em;">${mins} Minutes</span>`;
+            } else {
+                document.getElementById('badge-time-text').innerHTML = `Completed at: <span>${endTimeStr}</span>`;
+            }
+            document.getElementById('badge-modal').style.display = 'flex';
+            
+            // Provide feedback on main button
+            const btn = document.querySelector('.btn-complete');
+            if (btn) {
+                const originalText = "Mark Workout Complete";
+                btn.innerText = `✔ Workout Logged!${durationText}`;
+                btn.style.background = "#4CAF50";
+                btn.style.borderColor = "#4CAF50";
+                
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = "";
+                    btn.style.borderColor = "";
+                }, 4000);
+            }
+        }
+
+        function closeBadgeModal() {
+            document.getElementById('badge-modal').style.display = 'none';
+        }
+
+        function shareBadge() {
+            const dateStr = document.getElementById('badge-date-text').innerText;
+            const timeStr = document.getElementById('badge-time-text').innerText.replace(/\n/g, ' ');
+            const workoutName = document.getElementById('current-workout-title').innerText;
+            
+            const textToShare = `I just crushed "${workoutName}" on VolleyFit! 🏐💪\n${dateStr}\n${timeStr}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'VolleyFit Workout Complete',
+                    text: textToShare
+                }).catch(console.error);
+            } else {
+                // Fallback to clipboard
+                const textArea = document.createElement("textarea");
+                textArea.value = textToShare;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    const shareBtn = document.getElementById('btn-share-badge');
+                    const origTxt = shareBtn.innerText;
+                    shareBtn.innerText = "Copied to Clipboard!";
+                    setTimeout(() => { shareBtn.innerText = origTxt; }, 3000);
+                } catch (err) {
+                    console.error('Failed to copy', err);
+                }
+                document.body.removeChild(textArea);
+            }
         }
 
         function renderDaily() {
@@ -218,7 +812,11 @@
 
             if(!workout) {
                 document.getElementById('current-workout-title').innerText = "Active Recovery / Cardio";
-                content.innerHTML = `<div style="text-align:center; padding: 40px 0;"><h2 style="color:var(--text-muted)">Rest or Run Day</h2><p>Focus on cardio, stretching, and recovery.</p></div>`;
+                content.innerHTML = `
+                    <div style="text-align:center; padding: 4em 0; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 4px;">
+                        <h2 style="color:var(--text-main); border:none; margin-bottom: 0.5em;">Rest or Run Day</h2>
+                        <p style="color:var(--text-muted)">Focus on cardio, stretching, and recovery.</p>
+                    </div>`;
                 return;
             }
 
@@ -230,10 +828,11 @@
                 block.exercises.forEach(ex => {
                     const isChecked = completedExercises[ex.id] ? 'checked' : '';
                     const completedClass = completedExercises[ex.id] ? 'completed' : '';
-                    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.video + ' tutorial')}`;
+                    
+                    const videoLink = ex.url ? ex.url : `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.video + ' tutorial')}`;
                     
                     html += `
-                        <div class="exercise-card ${completedClass}" onclick="const cb = this.querySelector('input'); cb.checked = !cb.checked; toggleExercise('${ex.id}', this); event.stopPropagation();">
+                        <div class="exercise-card ${completedClass}" onclick="toggleExercise('${ex.id}', this);">
                             <div class="checkbox-container">
                                 <input type="checkbox" ${isChecked} onclick="event.stopPropagation(); toggleExercise('${ex.id}', this.parentElement.parentElement);">
                             </div>
@@ -241,7 +840,7 @@
                                 <span class="title">${ex.name}</span>
                                 <span class="reps">${ex.reps}</span>
                                 <p class="notes">${ex.notes}</p>
-                                <a href="${searchUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">▶ Watch Example</a>
+                                <a href="${videoLink}" target="_blank" class="video-link" onclick="event.stopPropagation()">Watch Example</a>
                             </div>
                         </div>
                     `;
@@ -250,6 +849,7 @@
             });
 
             content.innerHTML = html;
+            updateWorkoutStatus();
         }
 
         function renderCalendar() {
@@ -262,7 +862,7 @@
                 
                 html += `
                     <div class="calendar-day ${isToday}" onclick="setWorkoutDay(${index})">
-                        <h3>${day.day} ${isToday ? '(Selected)' : ''}</h3>
+                        <h3>${day.day} ${isToday ? '<span style="color:var(--accent); font-size:0.8em; margin-left:0.5em;">(Active)</span>' : ''}</h3>
                         <p>${workoutName}</p>
                     </div>
                 `;
@@ -271,9 +871,101 @@
             content.innerHTML = html;
         }
 
+        function renderSchedule() {
+            const content = document.getElementById('schedule-content');
+            let html = '';
+
+            schedule.forEach((day, index) => {
+                const isToday = index === currentDayIndex ? 'today' : '';
+                const workoutName = workouts[day.workout] ? workouts[day.workout].name : 'Rest / Cardio';
+                
+                html += `
+                    <div class="calendar-day ${isToday}" onclick="setWorkoutDay(${index})">
+                        <h3>${day.day} ${isToday ? '<span style="color:var(--accent); font-size:0.8em; margin-left:0.5em;">(Active)</span>' : ''}</h3>
+                        <p>${workoutName}</p>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+        }
+
+        function renderHistoryCalendar() {
+            const content = document.getElementById('month-grid-content');
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            
+            const year = historyCalDate.getFullYear();
+            const month = historyCalDate.getMonth();
+
+            document.getElementById('month-year-display').innerText = `${monthNames[month]} ${year}`;
+
+            // Handle Nav Button States (Limit to end of 2026)
+            document.getElementById('btn-next-month').disabled = (year >= 2026 && month >= 11);
+
+            const firstDay = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let html = `
+                <div class="month-day-header">Sun</div>
+                <div class="month-day-header">Mon</div>
+                <div class="month-day-header">Tue</div>
+                <div class="month-day-header">Wed</div>
+                <div class="month-day-header">Thu</div>
+                <div class="month-day-header">Fri</div>
+                <div class="month-day-header">Sat</div>
+            `;
+
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="month-date empty"></div>`;
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const mStr = String(month + 1).padStart(2, '0');
+                const dStr = String(d).padStart(2, '0');
+                const dateStr = `${year}-${mStr}-${dStr}`;
+
+                const isCompleted = completedDates[dateStr] ? 'completed' : '';
+                html += `<div class="month-date ${isCompleted}">${d}</div>`;
+            }
+
+            content.innerHTML = html;
+        }
+
+        function changeMonth(delta) {
+            const newMonth = historyCalDate.getMonth() + delta;
+            const tempDate = new Date(historyCalDate.getFullYear(), newMonth, 1);
+            
+            // Hard limit to end of 2026
+            if (tempDate.getFullYear() > 2026) return;
+            
+            historyCalDate = tempDate;
+            renderHistoryCalendar();
+        }
+
+        function checkDisclaimer() {
+            if (!localStorage.getItem('disclaimerAgreed')) {
+                document.getElementById('disclaimer-modal').style.display = 'flex';
+            }
+        }
+
+        function acceptDisclaimer() {
+            localStorage.setItem('disclaimerAgreed', 'true');
+            document.getElementById('disclaimer-modal').style.display = 'none';
+        }
+
+        function openPrivacyModal() {
+            document.getElementById('privacy-modal').style.display = 'flex';
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacy-modal').style.display = 'none';
+        }
+
         // Initialize App
+        checkDisclaimer();
         renderDaily();
-        renderCalendar();
+        renderSchedule();
+        renderHistoryCalendar();
     </script>
 </body>
 </html>
