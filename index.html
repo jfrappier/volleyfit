@@ -205,6 +205,10 @@
             transform: translateY(-2px);
         }
 
+        .exercise-card.disabled {
+            cursor: not-allowed;
+        }
+
         /* Completed State */
         .exercise-card.completed {
             background-color: #f8fafc;
@@ -245,7 +249,7 @@
             background: #ffffff;
         }
 
-        input[type="checkbox"]:hover {
+        input[type="checkbox"]:hover:not(:disabled) {
             border-color: var(--accent);
         }
 
@@ -253,6 +257,13 @@
             background-color: var(--accent);
             border-color: var(--accent);
             animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        input[type="checkbox"]:disabled {
+            background-color: #f0f4f8;
+            border-color: #cbd5e0;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
 
         @keyframes popIn {
@@ -362,11 +373,16 @@
         }
         .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
 
-        .btn-complete { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 3em; margin-bottom: 1em; box-shadow: var(--shadow-md);}
-        .btn-complete:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; box-shadow: var(--shadow-hover); transform: translateY(-1px);}
+        .btn-start { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 0; box-shadow: var(--shadow-md);}
+        .btn-start:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; }
+        
+        .btn-start.started { background: var(--text-main); border-color: var(--text-main); cursor: default; box-shadow: none; }
+        .btn-start.started:hover { background: var(--text-main); border-color: var(--text-main); color: #ffffff; }
 
-        .btn-start { background: var(--text-main); color: #ffffff; border-color: var(--text-main); margin-top: 0; box-shadow: var(--shadow-md);}
-        .btn-start:hover { background: var(--text-muted); border-color: var(--text-muted); color: #ffffff; }
+        .btn-complete { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 3em; margin-bottom: 1em; box-shadow: var(--shadow-md);}
+        .btn-complete:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; box-shadow: var(--shadow-hover); transform: translateY(-1px);}
+        
+        .btn-complete:disabled { background: var(--border); color: var(--text-muted); border-color: var(--border); cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* Calendar Schedule specific */
         .calendar-day {
@@ -506,7 +522,6 @@
             <div id="daily" class="container active">
                 <div id="workout-controls" style="margin-bottom: 1.5em; text-align: center;">
                     <button id="btn-start-workout" class="btn-reset btn-start" onclick="startWorkout()">Start Workout</button>
-                    <p id="workout-status" style="display: none; color: var(--accent); font-weight: 700; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.15em;"></p>
                 </div>
                 
                 <div class="progress-container" id="progress-container">
@@ -933,6 +948,10 @@
         }
 
         function toggleExercise(id, cardElement) {
+            if (!activeWorkoutStart) {
+                return; // Prevent interactions if workout hasn't started
+            }
+
             completedExercises[id] = !completedExercises[id];
             saveState();
             if(completedExercises[id]) {
@@ -1030,15 +1049,14 @@
             if (!activeWorkoutStart) {
                 activeWorkoutStart = new Date().toISOString();
                 localStorage.setItem('activeWorkoutStart', activeWorkoutStart);
-                updateWorkoutStatus();
-                updateProgressBar();
+                renderDaily(); // Re-render to enable everything
             }
         }
 
         function updateWorkoutStatus() {
             const controlsDiv = document.getElementById('workout-controls');
             const startBtn = document.getElementById('btn-start-workout');
-            const statusTxt = document.getElementById('workout-status');
+            const completeBtn = document.querySelector('.btn-complete');
 
             const baseWorkoutKey = schedule[currentDayIndex].workout;
             const workoutKey = getWorkoutKey(baseWorkoutKey);
@@ -1046,19 +1064,24 @@
 
             if (!workout) {
                 if(controlsDiv) controlsDiv.style.display = 'none';
+                if(completeBtn) completeBtn.style.display = 'none';
                 return;
             } else {
                 if(controlsDiv) controlsDiv.style.display = 'block';
+                if(completeBtn) completeBtn.style.display = 'block';
             }
 
             if (activeWorkoutStart) {
-                startBtn.style.display = 'none';
-                statusTxt.style.display = 'block';
                 const startTime = new Date(activeWorkoutStart).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                statusTxt.innerText = `Workout started at ${startTime}`;
+                startBtn.innerText = `Workout started at ${startTime}`;
+                startBtn.classList.add('started');
+                startBtn.disabled = true;
+                if (completeBtn) completeBtn.disabled = false;
             } else {
-                startBtn.style.display = 'block';
-                statusTxt.style.display = 'none';
+                startBtn.innerText = 'Start Workout';
+                startBtn.classList.remove('started');
+                startBtn.disabled = false;
+                if (completeBtn) completeBtn.disabled = true;
             }
         }
 
@@ -1089,8 +1112,7 @@
 
             saveState();
             renderHistoryCalendar();
-            updateWorkoutStatus();
-            updateProgressBar();
+            renderDaily(); // Re-render to visually disable cards again
             
             // Auto Upgrade Logic
             const completedCount = Object.keys(completedDates).length;
@@ -1117,7 +1139,13 @@
                 btn.innerText = `✔ Workout Logged!${durationText}`;
                 btn.style.background = "#4CAF50";
                 btn.style.borderColor = "#4CAF50";
-                setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; btn.style.borderColor = ""; }, 4000);
+                btn.style.color = "#ffffff";
+                setTimeout(() => { 
+                    btn.innerText = originalText; 
+                    btn.style.background = ""; 
+                    btn.style.borderColor = ""; 
+                    btn.style.color = "";
+                }, 4000);
             }
         }
 
@@ -1165,6 +1193,10 @@
 
             document.getElementById('current-workout-title').innerText = workout.name;
             let html = '';
+            
+            const isStarted = !!activeWorkoutStart;
+            const disabledClass = isStarted ? '' : 'disabled';
+            const disabledAttr = isStarted ? '' : 'disabled';
 
             workout.blocks.forEach(block => {
                 html += `<div class="workout-section"><h2>${block.title}</h2>`;
@@ -1174,9 +1206,9 @@
                     const videoLink = ex.url ? ex.url : `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.video + ' tutorial')}`;
                     
                     html += `
-                        <div class="exercise-card ${completedClass}" onclick="toggleExercise('${ex.id}', this);">
+                        <div class="exercise-card ${completedClass} ${disabledClass}" onclick="toggleExercise('${ex.id}', this);">
                             <div class="checkbox-container">
-                                <input type="checkbox" ${isChecked} onclick="event.stopPropagation(); toggleExercise('${ex.id}', this.parentElement.parentElement);">
+                                <input type="checkbox" ${isChecked} ${disabledAttr} onclick="event.stopPropagation(); toggleExercise('${ex.id}', this.parentElement.parentElement);">
                             </div>
                             <div class="exercise-info">
                                 <span class="title">${ex.name}</span>
