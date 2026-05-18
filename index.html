@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VolleyFit: 30-Min Power</title>
+    <style>
+        /* Paradigm Shift Inspired Styling */
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #333333;
+            --text-muted: #888888;
+            --accent: #ed786a; /* Paradigm Shift's signature coral/orange */
+            --accent-hover: #d66558;
+            --border: #eeeeee;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding-bottom: 80px; }
+
+        header { padding: 40px 20px; text-align: center; border-bottom: 2px solid var(--border); }
+        header h1 { font-size: 2rem; letter-spacing: -1px; margin-bottom: 10px; }
+        header p { color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* Navigation Tabs */
+        .nav { display: flex; justify-content: center; background: #f9f9f9; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .nav button { flex: 1; padding: 15px; background: none; border: none; font-size: 1rem; font-weight: bold; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .nav button.active { color: var(--accent); border-bottom: 3px solid var(--accent); }
+
+        /* Container */
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
+        .container.active { display: block; }
+
+        /* Workout Cards */
+        .workout-section { margin-bottom: 30px; }
+        .workout-section h2 { font-size: 1.2rem; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        
+        .exercise-card { display: flex; align-items: flex-start; padding: 15px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.2s; }
+        .exercise-card.completed { background-color: #fcfcfc; opacity: 0.6; }
+        .exercise-card.completed .title { text-decoration: line-through; }
+
+        /* Custom Checkbox */
+        .checkbox-container { margin-right: 15px; padding-top: 2px; }
+        input[type="checkbox"] { width: 24px; height: 24px; accent-color: var(--accent); cursor: pointer; }
+
+        .exercise-info { flex: 1; }
+        .title { font-weight: bold; font-size: 1.1rem; display: block; margin-bottom: 5px; }
+        .reps { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; display: inline-block; background: #f0f0f0; padding: 2px 8px; border-radius: 12px; }
+        .notes { font-size: 0.9rem; margin-bottom: 10px; }
+        
+        .video-link { display: inline-block; font-size: 0.85rem; color: var(--accent); text-decoration: none; font-weight: bold; }
+        .video-link:hover { text-decoration: underline; }
+
+        /* Calendar View */
+        .calendar-day { padding: 15px; border-left: 4px solid var(--border); margin-bottom: 15px; background: #f9f9f9; border-radius: 0 8px 8px 0; cursor: pointer;}
+        .calendar-day.today { border-left-color: var(--accent); background: #fff0ee; }
+        .calendar-day h3 { font-size: 1rem; margin-bottom: 5px; }
+        .calendar-day p { font-size: 0.85rem; color: var(--text-muted); }
+
+        .btn-reset { display: block; width: 100%; padding: 15px; background: var(--text-main); color: #fff; text-align: center; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>VolleyFit</h1>
+        <p id="current-workout-title">30-Min Power Program</p>
+    </header>
+
+    <div class="nav">
+        <button class="active" onclick="switchTab('daily')">Today's Workout</button>
+        <button onclick="switchTab('calendar')">Schedule</button>
+    </div>
+
+    <div id="daily" class="container active">
+        <div id="workout-content">
+            </div>
+        <button class="btn-reset" onclick="resetDay()">Reset Today's Progress</button>
+    </div>
+
+    <div id="calendar" class="container">
+        <h2>Rotating Schedule</h2>
+        <p style="font-size: 0.9rem; color: #888; margin-bottom: 20px;">Tap a day to set it as your current workout.</p>
+        <div id="calendar-content">
+            </div>
+    </div>
+
+    <script>
+        // Workout Database
+        const workouts = {
+            'A': {
+                name: 'Workout A: Vertical Power',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'a1', name: 'Seated Box Jumps', reps: '5 reps', notes: 'Explode up, step down.', video: 'Seated Box Jumps' },
+                            { id: 'a2', name: 'Pogo Jumps', reps: '15 seconds', notes: 'Max ankle stiffness.', video: 'Pogo Jumps exercise' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'a3', name: 'DB Reverse Lunges', reps: '8 reps / leg', notes: 'Drive through front heel.', video: 'Dumbbell Reverse Lunges' },
+                            { id: 'a4', name: 'Dead Bugs', reps: '10 reps / side', notes: 'Lower back glued to floor.', video: 'Dead Bug exercise' }
+                        ]
+                    }
+                ]
+            },
+            'B': {
+                name: 'Workout B: Upper Body Armor',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'b1', name: 'DB Push Press', reps: '8 reps', notes: 'Slight knee dip to drive up.', video: 'Dumbbell Push Press' },
+                            { id: 'b2', name: 'Pull-Ups or DB Rows', reps: '8-10 reps', notes: 'Squeeze back at the top.', video: 'Dumbbell Rows' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'b3', name: 'DB Scaption (Y-Raises)', reps: '10 reps', notes: '45-deg angle, thumbs up.', video: 'Dumbbell Scaption' },
+                            { id: 'b4', name: 'Weighted Russian Twists', reps: '15 reps / side', notes: 'Rotate torso, not just arms.', video: 'Weighted Russian Twists' }
+                        ]
+                    }
+                ]
+            },
+            'C': {
+                name: 'Workout C: Defense Agility',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'c1', name: 'Single-Arm DB Snatches', reps: '6 reps / arm', notes: 'Power from the hips.', video: 'Single-Arm Dumbbell Snatch' },
+                            { id: 'c2', name: 'Lateral Lunges', reps: '8 reps / leg', notes: 'Push hips back.', video: 'Lateral Lunges' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'c3', name: 'Push-Up to Renegade Row', reps: '8 reps / arm', notes: 'Keep hips square to floor.', video: 'Push-Up to Renegade Row' },
+                            { id: 'c4', name: 'Plank w/ Shoulder Taps', reps: '40 seconds', notes: 'Anti-rotation core hold.', video: 'Plank with Shoulder Taps' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        const schedule = [
+            { day: 'Monday', workout: 'A' },
+            { day: 'Tuesday', workout: 'Rest/Run' },
+            { day: 'Wednesday', workout: 'B' },
+            { day: 'Thursday', workout: 'Rest/Run' },
+            { day: 'Friday', workout: 'C' },
+            { day: 'Saturday', workout: 'Rest/Run' },
+            { day: 'Sunday', workout: 'Rest/Run' }
+        ];
+
+        // State Management
+        let currentDayIndex = parseInt(localStorage.getItem('currentDayIndex')) || 0;
+        let completedExercises = JSON.parse(localStorage.getItem('completedExercises')) || {};
+
+        function saveState() {
+            localStorage.setItem('currentDayIndex', currentDayIndex);
+            localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
+        }
+
+        // UI Functions
+        function switchTab(tabId) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function toggleExercise(id, cardElement) {
+            completedExercises[id] = !completedExercises[id];
+            saveState();
+            if(completedExercises[id]) {
+                cardElement.classList.add('completed');
+            } else {
+                cardElement.classList.remove('completed');
+            }
+        }
+
+        function resetDay() {
+            if(confirm('Clear all checks for today?')) {
+                const currentWorkout = schedule[currentDayIndex].workout;
+                if(workouts[currentWorkout]) {
+                    workouts[currentWorkout].blocks.forEach(block => {
+                        block.exercises.forEach(ex => {
+                            completedExercises[ex.id] = false;
+                        });
+                    });
+                }
+                saveState();
+                renderDaily();
+            }
+        }
+
+        function setWorkoutDay(index) {
+            currentDayIndex = index;
+            saveState();
+            renderDaily();
+            renderCalendar();
+            switchTab('daily');
+            document.querySelectorAll('.nav button')[0].classList.add('active');
+            document.querySelectorAll('.nav button')[1].classList.remove('active');
+        }
+
+        function renderDaily() {
+            const content = document.getElementById('workout-content');
+            const dayData = schedule[currentDayIndex];
+            const workout = workouts[dayData.workout];
+
+            if(!workout) {
+                document.getElementById('current-workout-title').innerText = "Active Recovery / Cardio";
+                content.innerHTML = `<div style="text-align:center; padding: 40px 0;"><h2 style="color:var(--text-muted)">Rest or Run Day</h2><p>Focus on cardio, stretching, and recovery.</p></div>`;
+                return;
+            }
+
+            document.getElementById('current-workout-title').innerText = workout.name;
+            let html = '';
+
+            workout.blocks.forEach(block => {
+                html += `<div class="workout-section"><h2>${block.title}</h2>`;
+                block.exercises.forEach(ex => {
+                    const isChecked = completedExercises[ex.id] ? 'checked' : '';
+                    const completedClass = completedExercises[ex.id] ? 'completed' : '';
+                    const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.video + ' tutorial')}`;
+                    
+                    html += `
+                        <div class="exercise-card ${completedClass}" onclick="const cb = this.querySelector('input'); cb.checked = !cb.checked; toggleExercise('${ex.id}', this); event.stopPropagation();">
+                            <div class="checkbox-container">
+                                <input type="checkbox" ${isChecked} onclick="event.stopPropagation(); toggleExercise('${ex.id}', this.parentElement.parentElement);">
+                            </div>
+                            <div class="exercise-info">
+                                <span class="title">${ex.name}</span>
+                                <span class="reps">${ex.reps}</span>
+                                <p class="notes">${ex.notes}</p>
+                                <a href="${searchUrl}" target="_blank" class="video-link" onclick="event.stopPropagation()">▶ Watch Example</a>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            });
+
+            content.innerHTML = html;
+        }
+
+        function renderCalendar() {
+            const content = document.getElementById('calendar-content');
+            let html = '';
+
+            schedule.forEach((day, index) => {
+                const isToday = index === currentDayIndex ? 'today' : '';
+                const workoutName = workouts[day.workout] ? workouts[day.workout].name : 'Rest / Cardio';
+                
+                html += `
+                    <div class="calendar-day ${isToday}" onclick="setWorkoutDay(${index})">
+                        <h3>${day.day} ${isToday ? '(Selected)' : ''}</h3>
+                        <p>${workoutName}</p>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+        }
+
+        // Initialize App
+        renderDaily();
+        renderCalendar();
+    </script>
+</body>
+</html>
