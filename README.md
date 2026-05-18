@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://via.placeholder.com/800x200/ed786a/ffffff?text=VOLLEYFIT+APP" alt="VolleyFit Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/jfrappier/volleyfit/refs/heads/main/logo.png" alt="VolleyFit Banner" width="100%">
 
   # VolleyFit
 
