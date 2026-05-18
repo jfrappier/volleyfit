@@ -2,8 +2,6 @@
 
   <img src="https://raw.githubusercontent.com/jfrappier/volleyfit/refs/heads/main/logo.png" alt="VolleyFit Banner" width="100%">
 
-  # VolleyFit
-
   *A zero-dependency, progressive 30-minute daily power program for volleyball players.*
 
   [![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)]()
