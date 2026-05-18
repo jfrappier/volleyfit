@@ -5,17 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VolleyFit: 30-Min Power</title>
     <style>
-        /* HTML5 UP "Paradigm Shift" Inspired Styling */
+        /* HTML5 UP "Paradigm Shift" Inspired Styling - Modernized */
         @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
 
         :root {
-            --bg-body: #f2f2f2;
+            --bg-body: #f4f6f8; /* Slightly cooler, modern grey */
             --bg-panel: #ffffff;
-            --text-main: #414f57;
-            --text-muted: #737373;
+            --text-main: #2d3748; /* Deeper slate for better contrast */
+            --text-muted: #718096;
             --accent: #ed786a; 
             --accent-hover: #e86453;
-            --border: #e5e5e5;
+            --accent-light: #fef1f0; /* Soft background for pills */
+            --border: #e2e8f0;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
+            --shadow-hover: 0 10px 25px rgba(237, 120, 106, 0.15);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,9 +39,9 @@
         h1, h2, h3 { 
             color: var(--text-main); 
             font-weight: 700; 
-            letter-spacing: 0.075em; 
-            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
         }
+        h1, h2 { text-transform: uppercase; }
 
         /* Layout Structure */
         #wrapper {
@@ -56,12 +63,19 @@
             top: 0;
             height: 100vh;
             overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.02);
+            z-index: 10;
         }
 
+        /* Gradient Branding */
         #header h1 {
-            font-size: 2.25em;
+            font-size: 2.5em;
             line-height: 1.2;
-            margin-bottom: 0.25em;
+            margin-bottom: 0.1em;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.1em;
         }
 
         #header p {
@@ -77,20 +91,20 @@
         .nav {
             display: flex;
             flex-direction: column;
-            gap: 1em;
+            gap: 0.75em;
         }
 
         .nav button {
             appearance: none;
             background: transparent;
-            border: solid 1px var(--border);
-            border-radius: 4px;
-            color: var(--text-main);
+            border: solid 2px transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
             cursor: pointer;
             font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.8em;
+            font-size: 0.85em;
             font-weight: 700;
-            letter-spacing: 0.25em;
+            letter-spacing: 0.2em;
             padding: 1.25em 2em;
             text-align: center;
             text-decoration: none;
@@ -100,14 +114,15 @@
         }
 
         .nav button:hover {
-            border-color: var(--accent);
-            color: var(--accent);
+            background: var(--bg-body);
+            color: var(--text-main);
         }
 
         .nav button.active {
-            background: var(--accent);
+            background: var(--bg-panel);
             border-color: var(--accent);
-            color: #ffffff;
+            color: var(--accent);
+            box-shadow: var(--shadow-sm);
         }
 
         /* Right Content Panel */
@@ -117,61 +132,88 @@
         }
 
         .container { display: none; max-width: 800px; margin: 0 auto; }
-        .container.active { display: block; animation: fadeIn 0.5s ease-in-out; }
+        .container.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Section Headings (Paradigm Shift Style) */
+        /* Section Headings */
         .workout-section h2, #calendar h2 {
-            font-size: 1.25em;
-            border-bottom: solid 2px var(--border);
-            padding-bottom: 0.75em;
-            margin-bottom: 2em;
-            position: relative;
+            font-size: 1.1em;
+            color: var(--text-muted);
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 1.5em;
+            display: flex;
+            align-items: center;
         }
-
-        .workout-section h2::after, #calendar h2::after {
+        
+        .workout-section h2::after {
             content: '';
-            display: block;
-            width: 4em;
-            height: 2px;
-            background: var(--accent);
-            position: absolute;
-            bottom: -2px;
-            left: 0;
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+            margin-left: 1em;
         }
 
-        .workout-section { margin-bottom: 4em; }
+        .workout-section { margin-bottom: 3.5em; }
+
+        /* Workout Progress Bar */
+        .progress-container {
+            width: 100%;
+            background-color: var(--border);
+            border-radius: 20px;
+            height: 8px;
+            margin: 1.5em 0 2.5em 0;
+            overflow: hidden;
+            display: none; /* Shown via JS when workout is active */
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #ff998c);
+            width: 0%;
+            border-radius: 20px;
+            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
         /* Exercise Cards */
         .exercise-card {
             background: var(--bg-panel);
             border: solid 1px var(--border);
-            border-radius: 4px;
-            padding: 2em;
-            margin-bottom: 1.5em;
+            border-radius: var(--radius-md);
+            padding: 1.75em;
+            margin-bottom: 1em;
             display: flex;
             align-items: flex-start;
-            transition: all 0.2s ease-in-out;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--shadow-sm);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
         .exercise-card:hover {
             border-color: var(--accent);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-hover);
             transform: translateY(-2px);
         }
 
+        /* Completed State */
         .exercise-card.completed {
-            background-color: #fafafa;
-            opacity: 0.6;
-            border-color: var(--border);
+            background-color: #f8fafc;
+            opacity: 0.7;
+            border-color: transparent;
             transform: none;
             box-shadow: none;
+        }
+
+        .exercise-card.completed::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0; width: 4px;
+            background-color: #4CAF50;
         }
 
         .exercise-card.completed .title {
@@ -182,24 +224,36 @@
         /* Checkbox Styling */
         .checkbox-container {
             margin-right: 1.5em;
-            padding-top: 0.25em;
+            padding-top: 0.1em;
         }
         
         input[type="checkbox"] {
             appearance: none;
-            width: 1.5em;
-            height: 1.5em;
-            border: 2px solid var(--border);
-            border-radius: 4px;
+            width: 1.75em;
+            height: 1.75em;
+            border: 2px solid #cbd5e0;
+            border-radius: 6px;
             outline: none;
             cursor: pointer;
             position: relative;
             transition: all 0.2s ease;
+            background: #ffffff;
+        }
+
+        input[type="checkbox"]:hover {
+            border-color: var(--accent);
         }
 
         input[type="checkbox"]:checked {
             background-color: var(--accent);
             border-color: var(--accent);
+            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         input[type="checkbox"]:checked::after {
@@ -209,71 +263,126 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 0.9em;
+            font-size: 1em;
         }
 
         /* Card Content */
         .exercise-info { flex: 1; }
-        .title { color: var(--text-main); font-weight: 700; font-size: 1.2em; display: block; margin-bottom: 0.25em; letter-spacing: 0.05em;}
-        .reps { font-size: 0.85em; font-weight: 600; color: var(--accent); margin-bottom: 1em; display: inline-block; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--accent); padding: 0.25em 0.75em; border-radius: 4px;}
-        .notes { font-size: 1em; margin-bottom: 1em; }
+        .title { color: var(--text-main); font-weight: 700; font-size: 1.25em; display: block; margin-bottom: 0.25em; letter-spacing: 0.02em;}
+        .reps { font-size: 0.8em; font-weight: 700; color: var(--accent); margin-bottom: 1em; display: inline-block; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-light); padding: 0.3em 0.8em; border-radius: var(--radius-sm);}
+        .notes { font-size: 1em; margin-bottom: 1em; color: var(--text-muted); }
         
+        /* Video Pill Button */
         .video-link {
             display: inline-flex;
             align-items: center;
-            font-size: 0.85em;
+            font-size: 0.75em;
             color: var(--text-main);
             text-decoration: none;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            transition: color 0.2s;
+            background: var(--bg-body);
+            padding: 0.5em 1.2em;
+            border-radius: 20px;
+            transition: all 0.2s;
         }
         
-        .video-link:hover { color: var(--accent); }
-        .video-link::before { content: '▶'; margin-right: 0.5em; color: var(--accent); font-size: 0.8em; }
+        .video-link:hover { background: var(--border); color: var(--text-main); }
+        .video-link::before { content: '▶'; margin-right: 0.6em; color: var(--accent); font-size: 0.9em; }
 
-        /* Month Progress Calendar View */
-        .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; }
-        .month-header button { background: none; border: solid 2px var(--border); padding: 0.75em 1.5em; cursor: pointer; border-radius: 4px; font-family: 'Source Sans Pro', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.8em; color: var(--text-main); transition: all 0.2s ease;}
-        .month-header button:hover { border-color: var(--accent); color: var(--accent); }
-        .month-header button:disabled { opacity: 0.3; cursor: not-allowed; border-color: var(--border); color: var(--text-main); }
-        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5em; text-align: center; }
-        .month-day-header { font-weight: 700; font-size: 0.85em; color: var(--text-muted); text-transform: uppercase; padding-bottom: 1em; letter-spacing: 0.1em;}
-        .month-date { border: solid 1px var(--border); padding: 1.5em 0; border-radius: 4px; background: var(--bg-panel); font-size: 1em; font-weight: 600; color: var(--text-main); }
-        .month-date.completed { background: var(--accent); color: #ffffff; border-color: var(--accent); box-shadow: 0 2px 8px rgba(237, 120, 106, 0.3); }
-        .month-date.empty { background: transparent; border: none; }
-        
-        .btn-complete { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 3em; margin-bottom: 1em;}
-        .btn-complete:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; }
-
-        .btn-start { background: var(--text-main); color: #ffffff; border-color: var(--text-main); margin-top: 0; }
-        .btn-start:hover { background: var(--text-muted); border-color: var(--text-muted); color: #ffffff; }
-
-        /* Badge Modal */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        .modal-content {
-            background: var(--bg-panel);
-            padding: 3em 2em;
-            border-radius: 8px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        /* Level Toggle - iOS Segmented Control Style */
+        .level-toggle { 
+            display: flex; 
+            margin-bottom: 2em; 
+            background: #e2e8f0; 
+            border-radius: var(--radius-lg); 
+            padding: 0.3em;
             position: relative;
         }
+        .level-toggle button { 
+            flex: 1; 
+            padding: 1em 0.5em; 
+            border: none; 
+            background: transparent; 
+            border-radius: var(--radius-md);
+            font-family: 'Source Sans Pro', sans-serif; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            letter-spacing: 0.05em; 
+            font-size: 0.8em;
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
+            color: var(--text-muted); 
+            z-index: 2;
+        }
+        .level-toggle button:hover { color: var(--text-main); }
+        .level-toggle button.active { 
+            background: #ffffff; 
+            color: var(--accent); 
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Calendar Elements */
+        .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; }
+        .month-header button { background: var(--bg-panel); border: solid 1px var(--border); padding: 0.75em 1.5em; cursor: pointer; border-radius: var(--radius-sm); font-family: 'Source Sans Pro', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8em; color: var(--text-main); transition: all 0.2s ease; box-shadow: var(--shadow-sm);}
+        .month-header button:hover { border-color: var(--accent); color: var(--accent); }
+        .month-header button:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--border); color: var(--text-muted); box-shadow: none;}
+        
+        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5em; text-align: center; }
+        .month-day-header { font-weight: 700; font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; padding-bottom: 0.5em; letter-spacing: 0.1em;}
+        .month-date { border: solid 1px var(--border); padding: 1.5em 0; border-radius: var(--radius-md); background: var(--bg-panel); font-size: 1.1em; font-weight: 600; color: var(--text-main); }
+        .month-date.completed { background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: #ffffff; border-color: transparent; box-shadow: var(--shadow-md); }
+        .month-date.empty { background: transparent; border: none; }
+        
+        /* Action Buttons */
+        .btn-reset {
+            display: block;
+            width: 100%;
+            appearance: none;
+            background: transparent;
+            border: solid 2px var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            cursor: pointer;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9em;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            padding: 1.25em;
+            text-align: center;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            margin-top: 3em;
+        }
+        .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+        .btn-complete { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 3em; margin-bottom: 1em; box-shadow: var(--shadow-md);}
+        .btn-complete:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; box-shadow: var(--shadow-hover); transform: translateY(-1px);}
+
+        .btn-start { background: var(--text-main); color: #ffffff; border-color: var(--text-main); margin-top: 0; box-shadow: var(--shadow-md);}
+        .btn-start:hover { background: var(--text-muted); border-color: var(--text-muted); color: #ffffff; }
+
+        /* Calendar Schedule specific */
+        .calendar-day {
+            background: var(--bg-panel);
+            border: solid 1px var(--border);
+            border-left: solid 4px var(--border);
+            padding: 1.5em 2em;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+        .calendar-day:hover { border-left-color: var(--accent); transform: translateX(4px); box-shadow: var(--shadow-md); }
+        .calendar-day.today { border-left-color: var(--accent); background: #ffffff; box-shadow: var(--shadow-hover); }
+
+        /* Modals... (Kept identical to your previous code, just updated radius/shadow vars) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; animation: fadeIn 0.3s ease-in-out; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--bg-panel); padding: 3em 2em; border-radius: var(--radius-lg); text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; }
         .modal-content h2 { margin-bottom: 0.5em; color: var(--text-main); }
-        .badge-svg { width: 120px; height: 120px; margin: 0 auto 1.5em auto; display: block; }
-        .badge-details { background: #f9f9f9; padding: 1.5em; border-radius: 4px; margin-bottom: 2em; border: 1px solid var(--border); }
+        .badge-svg { width: 120px; height: 120px; margin: 0 auto 1.5em auto; display: block; filter: drop-shadow(0 10px 15px rgba(237,120,106,0.3));}
+        .badge-details { background: var(--bg-body); padding: 1.5em; border-radius: var(--radius-sm); margin-bottom: 2em; border: 1px solid var(--border); }
         .badge-details p { margin: 0.25em 0; font-weight: 600; color: var(--text-muted); font-size: 0.9em; letter-spacing: 0.05em; text-transform: uppercase;}
         .badge-details p span { color: var(--text-main); }
         
@@ -282,116 +391,39 @@
         .btn-close-modal { background: transparent; color: var(--text-muted); border-color: var(--text-muted); width: 100%; padding: 1em; margin-top: 0; }
         .btn-close-modal:hover { border-color: var(--text-main); color: var(--text-main); }
 
-        /* Disclaimer Modal Specifics */
         #disclaimer-modal .modal-content { max-width: 550px; text-align: left; }
         #disclaimer-modal h2 { text-align: center; color: var(--accent); margin-bottom: 1em; font-size: 1.5em; }
-        #disclaimer-modal p { font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6; }
+        #disclaimer-modal p { font-size: 0.95em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6; }
         #disclaimer-modal .strong-disclaimer { font-weight: 700; text-transform: uppercase; font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 2em; letter-spacing: 0.05em; }
-        .btn-agree { appearance: none; border: none; border-radius: 4px; background: var(--text-main); color: #ffffff; margin-top: 1.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
+        .btn-agree { appearance: none; border: none; border-radius: var(--radius-sm); background: var(--text-main); color: #ffffff; margin-top: 1.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
         .btn-agree:hover { background: var(--text-muted); }
-
-        /* Calendar View */
-        #calendar-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1em;
-        }
-
-        .calendar-day {
-            background: var(--bg-panel);
-            border: solid 1px var(--border);
-            border-left: solid 4px var(--border);
-            padding: 1.5em 2em;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .calendar-day:hover {
-            border-left-color: var(--accent);
-            background: #fafafa;
-        }
-
-        .calendar-day.today {
-            border-left-color: var(--accent);
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(237, 120, 106, 0.15);
-        }
-
-        .calendar-day h3 { font-size: 1.1em; margin-bottom: 0.25em; }
-        .calendar-day p { font-size: 0.9em; margin: 0; }
-
-        /* Action Buttons */
-        .btn-reset {
-            display: block;
-            width: 100%;
-            appearance: none;
-            background: transparent;
-            border: solid 2px var(--border);
-            border-radius: 4px;
-            color: var(--text-main);
-            cursor: pointer;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9em;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            padding: 1.5em;
-            text-align: center;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-            margin-top: 3em;
-        }
-
-        .btn-reset:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
 
         /* Responsive Design */
         @media screen and (max-width: 980px) {
             #wrapper { flex-direction: column; }
-            
-            #header {
-                width: 100%;
-                height: auto;
-                position: relative;
-                padding: 3em 2em;
-                border-right: none;
-                border-bottom: solid 1px var(--border);
-                text-align: center;
-            }
-
-            #header h1 { font-size: 2em; }
-            #header p { margin-bottom: 2em; }
-
-            .nav {
-                flex-direction: row;
-                justify-content: center;
-            }
-
-            #main {
-                width: 100%;
-                padding: 3em 2em;
-            }
-
-            .exercise-card {
-                padding: 1.5em;
-            }
+            #header { width: 100%; height: auto; position: relative; padding: 3em 2em; border-right: none; border-bottom: solid 1px var(--border); text-align: center; }
+            .nav { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+            .nav button { width: auto; padding: 1em 1.5em; }
+            #main { width: 100%; padding: 3em 1.5em; }
         }
         
         @media screen and (max-width: 480px) {
             .nav { flex-direction: column; }
-            #main { padding: 2em 1.5em; }
-            .exercise-card { flex-direction: column; position: relative; }
-            .checkbox-container { position: absolute; top: 1.5em; right: 1.5em; margin: 0; }
-            .title { padding-right: 2em; }
+            .nav button { width: 100%; }
+            #main { padding: 2em 1em; }
+            .exercise-card { flex-direction: column; position: relative; padding: 1.5em; }
+            .checkbox-container { position: absolute; top: 1.5em; right: 1.25em; margin: 0; }
+            .title { padding-right: 2.5em; font-size: 1.1em;}
+            .level-toggle { flex-direction: column; border-radius: var(--radius-md); padding: 0.5em;}
+            .level-toggle button { margin-bottom: 0.25em; }
+            .month-grid { gap: 0.25em; }
+            .month-date { padding: 1em 0; font-size: 0.9em; }
         }
     </style>
 </head>
 <body>
 
     <div id="wrapper">
-        <!-- Sidebar / Header -->
         <header id="header">
             <h1>VolleyFit</h1>
             <p id="current-workout-title">30-Min Power Program</p>
@@ -403,44 +435,51 @@
             </div>
         </header>
 
-        <!-- Main Content Area -->
         <main id="main">
             <div id="daily" class="container active">
-                <div id="workout-controls" style="margin-bottom: 2.5em; text-align: center;">
+                <div id="workout-controls" style="margin-bottom: 1.5em; text-align: center;">
                     <button id="btn-start-workout" class="btn-reset btn-start" onclick="startWorkout()">Start Workout</button>
                     <p id="workout-status" style="display: none; color: var(--accent); font-weight: 700; font-size: 0.9em; text-transform: uppercase; letter-spacing: 0.15em;"></p>
                 </div>
-                <div id="workout-content">
-                    <!-- Dynamic Workout Content Injected Here -->
+                
+                <div class="progress-container" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
                 </div>
+
+                <div id="workout-content">
+                    </div>
                 <button class="btn-reset btn-complete" onclick="markWorkoutComplete()">Mark Workout Complete</button>
-                <button class="btn-reset" style="margin-top: 0;" onclick="resetDay()">Reset Today's Progress</button>
+                <button class="btn-reset" style="margin-top: 0; color: var(--text-muted);" onclick="resetDay()">Reset Today's Progress</button>
             </div>
 
             <div id="schedule" class="container">
-                <h2>Rotating Schedule</h2>
-                <p style="margin-bottom: 2em;">Select a day below to set it as your current active workout.</p>
-                <div id="schedule-content">
-                    <!-- Dynamic Calendar Content Injected Here -->
+                <h2 style="font-size: 1.5em; border:none; margin-bottom: 0.5em; color: var(--text-main);">Rotating Schedule</h2>
+                <p style="margin-bottom: 2em; color: var(--text-muted);">Select a day below to set it as your current active workout.</p>
+                
+                <div class="level-toggle">
+                    <button id="btn-level-beginner" class="active" onclick="setLevel('beginner')">Beginner</button>
+                    <button id="btn-level-intermediate" onclick="setLevel('intermediate')">Intermediate</button>
+                    <button id="btn-level-advanced" onclick="setLevel('advanced')">Advanced</button>
                 </div>
+
+                <div id="schedule-content" style="display: grid; gap: 1em;">
+                    </div>
             </div>
 
             <div id="history" class="container">
-                <h2>Workout History</h2>
-                <p style="margin-bottom: 2em;">Track your completed workouts.</p>
+                <h2 style="font-size: 1.5em; border:none; margin-bottom: 0.5em; color: var(--text-main);">Workout History</h2>
+                <p style="margin-bottom: 2em; color: var(--text-muted);">Track your completed workouts.</p>
                 <div class="month-header">
                     <button onclick="changeMonth(-1)" id="btn-prev-month">&lt; Prev</button>
-                    <h3 id="month-year-display" style="margin:0; border:none; padding:0; letter-spacing: 0.1em;"></h3>
+                    <h3 id="month-year-display" style="margin:0; border:none; padding:0; letter-spacing: 0.1em; text-transform: uppercase;"></h3>
                     <button onclick="changeMonth(1)" id="btn-next-month">Next &gt;</button>
                 </div>
                 <div class="month-grid" id="month-grid-content">
-                    <!-- Calendar days injected here -->
-                </div>
+                    </div>
             </div>
         </main>
     </div>
 
-    <!-- Badge Modal -->
     <div id="badge-modal" class="modal-overlay">
         <div class="modal-content">
             <svg class="badge-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -449,7 +488,7 @@
                 <text x="50" y="82" font-family="'Source Sans Pro', sans-serif" font-size="12" fill="white" font-weight="700" letter-spacing="1" text-anchor="middle">VOLLEYFIT</text>
             </svg>
             <h2>Workout Complete!</h2>
-            <p style="margin-bottom: 1.5em;">Great job crushing today's session.</p>
+            <p style="margin-bottom: 1.5em; color: var(--text-muted);">Great job crushing today's session.</p>
             
             <div class="badge-details">
                 <p id="badge-date-text"></p>
@@ -461,7 +500,6 @@
         </div>
     </div>
 
-    <!-- Medical Disclaimer Modal -->
     <div id="disclaimer-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>Medical Disclaimer & Terms of Use</h2>
@@ -474,23 +512,18 @@
         </div>
     </div>
 
-    <!-- Data Privacy Modal -->
     <div id="privacy-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 600px; text-align: left;">
             <h2 style="text-align: center; color: var(--accent); margin-bottom: 1em; font-size: 1.5em;">Data Privacy Policy</h2>
-            
             <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>1. Local Storage Only:</strong> VolleyFit operates entirely within your web browser. All workout data, completion dates, and preferences are stored exclusively in your device's Local Storage. The author does not collect, transmit, track, or store any of your personal information, health data, or location data.</p>
-            
             <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>2. Third-Party Hosting:</strong> This application is hosted via GitHub Pages. While the application itself does not track you, GitHub may collect standard web server logs (including IP addresses, browser types, and referring pages) as part of their standard hosting infrastructure. Please review GitHub's Privacy Statement for more details.</p>
-            
-            <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>3. GDPR, CCPA, & Massachusetts Law Compliance:</strong> Because we do not collect, process, sell, or control your personal data or Personally Identifiable Information (PII), we inherently align with the data minimization principles of the General Data Protection Regulation (GDPR), the California Consumer Privacy Act (CCPA), and Massachusetts Data Security Law (MGL c. 93H / 201 CMR 17.00). You retain 100% control over your data. To permanently delete all your data, simply clear your browser's local storage or cache.</p>
-            
+            <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>3. GDPR, CCPA, & Compliance:</strong> Because we do not collect, process, sell, or control your personal data or Personally Identifiable Information (PII), we inherently align with data minimization principles. You retain 100% control over your data. To permanently delete all your data, simply clear your browser's local storage or cache.</p>
             <button class="btn-reset btn-close-modal" style="margin-top: 1.5em;" onclick="closePrivacyModal()">Close Privacy Policy</button>
         </div>
     </div>
 
     <script>
-        // Workout Database
+        // Database logic remains identical to the previous version
         const workouts = {
             'A': {
                 name: 'Workout A: Vertical Power',
@@ -507,6 +540,27 @@
                         exercises: [
                             { id: 'a3', name: 'DB Reverse Lunges', reps: '8 reps / leg', notes: 'Drive through front heel.', video: 'Dumbbell Reverse Lunges' },
                             { id: 'a4', name: 'Dead Bugs', reps: '10 reps / side', notes: 'Lower back glued to floor.', video: 'Dead Bug exercise' }
+                        ]
+                    }
+                ]
+            },
+            'A2': {
+                name: 'Workout A: Vertical Power (Intermediate)',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'a2-1', name: 'Seated Box Jumps', reps: '5 reps', notes: 'Explode up, step down softly.', video: 'Seated Box Jumps' },
+                            { id: 'a2-2', name: 'Pogo Jumps', reps: '20 seconds', notes: 'Max ankle stiffness and height.', video: 'Pogo Jumps exercise' },
+                            { id: 'a2-3', name: 'Broad Jumps', reps: '5 reps', notes: 'Explode forward, stick the landing.', video: 'Broad Jumps' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'a2-4', name: 'DB Reverse Lunges', reps: '10 reps / leg', notes: 'Drive through front heel.', video: 'Dumbbell Reverse Lunges' },
+                            { id: 'a2-5', name: 'Dead Bugs', reps: '12 reps / side', notes: 'Lower back glued to floor.', video: 'Dead Bug exercise' },
+                            { id: 'a2-6', name: 'DB Romanian Deadlifts', reps: '10 reps', notes: 'Hinge at the hips, slight knee bend.', video: 'Dumbbell RDL' }
                         ]
                     }
                 ]
@@ -530,6 +584,27 @@
                     }
                 ]
             },
+            'B2': {
+                name: 'Workout B: Upper Body Armor (Intermediate)',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'b2-1', name: 'DB Push Press', reps: '10 reps', notes: 'Slight knee dip to drive up.', video: 'Dumbbell Push Press' },
+                            { id: 'b2-2', name: 'Pull-Ups or DB Rows', reps: '10-12 reps', notes: 'Squeeze back at the top.', video: 'Dumbbell Rows' },
+                            { id: 'b2-3', name: 'Push-Ups', reps: 'Max Reps', notes: 'Strict form, stop 1 rep shy of failure.', video: 'Perfect Pushup' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'b2-4', name: 'DB Scaption (Y-Raises)', reps: '12 reps', notes: '45-deg angle, thumbs up.', video: 'Dumbbell Scaption' },
+                            { id: 'b2-5', name: 'Weighted Russian Twists', reps: '20 reps / side', notes: 'Rotate torso, not just arms.', video: 'Weighted Russian Twists' },
+                            { id: 'b2-6', name: 'Superman Holds', reps: '15 reps', notes: 'Squeeze glutes and back, hold 1s at top.', video: 'Superman Exercise' }
+                        ]
+                    }
+                ]
+            },
             'C': {
                 name: 'Workout C: Defense Agility',
                 blocks: [
@@ -545,6 +620,27 @@
                         exercises: [
                             { id: 'c3', name: 'Push-Up to Renegade Row', reps: '8 reps / arm', notes: 'Keep hips square to floor.', video: 'Push-Up to Renegade Row' },
                             { id: 'c4', name: 'Plank w/ Shoulder Taps', reps: '40 seconds', notes: 'Anti-rotation core hold.', video: 'Plank with Shoulder Taps' }
+                        ]
+                    }
+                ],
+            },
+            'C2': {
+                name: 'Workout C: Defense Agility (Intermediate)',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'c2-1', name: 'Single-Arm DB Snatches', reps: '8 reps / arm', notes: 'Power from the hips.', video: 'Single-Arm Dumbbell Snatch' },
+                            { id: 'c2-2', name: 'Lateral Lunges', reps: '10 reps / leg', notes: 'Push hips back.', video: 'Lateral Lunges' },
+                            { id: 'c2-3', name: 'Skater Jumps', reps: '10 reps / side', notes: 'Explosive lateral push off outside leg.', video: 'Skater Jumps' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'c2-4', name: 'Push-Up to Renegade Row', reps: '8 reps / arm', notes: 'Keep hips square to floor.', video: 'Push-Up to Renegade Row' },
+                            { id: 'c2-5', name: 'Plank w/ Shoulder Taps', reps: '45 seconds', notes: 'Anti-rotation core hold.', video: 'Plank with Shoulder Taps' },
+                            { id: 'c2-6', name: 'Mountain Climbers', reps: '30 seconds', notes: 'Fast pace, keep hips level.', video: 'Mountain Climbers' }
                         ]
                     }
                 ],
@@ -569,6 +665,145 @@
                         ]
                     }
                 ]
+            },
+            'D2': {
+                name: 'Workout D: Core & Swing Mechanics (Intermediate)',
+                blocks: [
+                    {
+                        title: 'Volleyball Core (3 Rounds - Rest 45s)',
+                        exercises: [
+                            { id: 'd2-1', name: 'Hollow Body Hold', reps: '45 seconds', notes: 'Mimics pre-swing mid-air tension. Press lower back into floor.', video: 'Hollow Body Hold' },
+                            { id: 'd2-2', name: 'Seated Rotational Twists', reps: '20 reps / side', notes: 'Focus on torso rotation to simulate arm swing torque.', video: 'Russian Twists' },
+                            { id: 'd2-3', name: 'Bird-Dog', reps: '12 reps / side', notes: 'Slow and controlled. Builds back and core stability.', video: 'Bird Dog Exercise' },
+                            { id: 'd2-4', name: 'Side Plank', reps: '30 seconds / side', notes: 'Keep body in a straight line, push floor away.', video: 'Side Plank' }
+                        ]
+                    },
+                    {
+                        title: 'Swing Mechanics (Focus on Form - Rest as needed)',
+                        exercises: [
+                            { id: 'd2-5', name: 'Half-Kneeling Swings (Left Knee Up)', reps: '25 reps', notes: 'Left knee bent, right knee on floor. Focus on elbow draw and torque.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd2-6', name: 'Half-Kneeling Swings (Right Knee Up)', reps: '25 reps', notes: 'Right knee bent, left knee on floor. Maintain high elbow.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd2-7', name: 'Tall Kneeling Swings', reps: '25 reps', notes: 'Both knees on floor. Engage core to snap through the swing.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd2-8', name: 'Standing Arm Swings', reps: '20 reps', notes: 'Full standing swing mechanics, focus on quick torque.', video: 'Volleyball Arm Swing Mechanics' }
+                        ]
+                    }
+                ]
+            },
+            'A3': {
+                name: 'Workout A: Vertical Power (Advanced)',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'a3-1', name: 'Seated Box Jumps', reps: '6 reps', notes: 'Explode up, step down softly.', video: 'Seated Box Jumps' },
+                            { id: 'a3-2', name: 'Pogo Jumps', reps: '30 seconds', notes: 'Max ankle stiffness and height.', video: 'Pogo Jumps exercise' },
+                            { id: 'a3-3', name: 'Broad Jumps', reps: '6 reps', notes: 'Explode forward, stick the landing.', video: 'Broad Jumps' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'a3-4', name: 'DB Reverse Lunges', reps: '12 reps / leg', notes: 'Drive through front heel.', video: 'Dumbbell Reverse Lunges' },
+                            { id: 'a3-5', name: 'Dead Bugs', reps: '15 reps / side', notes: 'Lower back glued to floor.', video: 'Dead Bug exercise' },
+                            { id: 'a3-6', name: 'DB Romanian Deadlifts', reps: '12 reps', notes: 'Hinge at the hips, slight knee bend.', video: 'Dumbbell RDL' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 3 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'a3-7', name: 'Bulgarian Split Squats', reps: '8 reps / leg', notes: 'Keep chest up, drop back knee down.', video: 'Bulgarian Split Squat' },
+                            { id: 'a3-8', name: 'Depth Drops', reps: '5 reps', notes: 'Step off low box, stick landing instantly.', video: 'Depth Drop' },
+                            { id: 'a3-9', name: 'Calf Raises', reps: '20 reps', notes: 'Full extension, slow negative.', video: 'Standing Calf Raise' }
+                        ]
+                    }
+                ]
+            },
+            'B3': {
+                name: 'Workout B: Upper Body Armor (Advanced)',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'b3-1', name: 'DB Push Press', reps: '12 reps', notes: 'Slight knee dip to drive up.', video: 'Dumbbell Push Press' },
+                            { id: 'b3-2', name: 'Pull-Ups or DB Rows', reps: '12-15 reps', notes: 'Squeeze back at the top.', video: 'Dumbbell Rows' },
+                            { id: 'b3-3', name: 'Push-Ups', reps: 'Max Reps', notes: 'Strict form, stop 1 rep shy of failure.', video: 'Perfect Pushup' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'b3-4', name: 'DB Scaption (Y-Raises)', reps: '15 reps', notes: '45-deg angle, thumbs up.', video: 'Dumbbell Scaption' },
+                            { id: 'b3-5', name: 'Weighted Russian Twists', reps: '25 reps / side', notes: 'Rotate torso, not just arms.', video: 'Weighted Russian Twists' },
+                            { id: 'b3-6', name: 'Superman Holds', reps: '20 reps', notes: 'Squeeze glutes and back, hold 1s at top.', video: 'Superman Exercise' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 3 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'b3-7', name: 'Pike Push-Ups', reps: '10 reps', notes: 'Hips high, focus on shoulders.', video: 'Pike Pushup' },
+                            { id: 'b3-8', name: 'DB Lateral Raises', reps: '12 reps', notes: 'Slight bend in elbows, control down.', video: 'Dumbbell Lateral Raise' },
+                            { id: 'b3-9', name: 'Plank to Down-Dog', reps: '10 reps', notes: 'Flow smoothly, stretch shoulders.', video: 'Plank to Downward Dog' }
+                        ]
+                    }
+                ]
+            },
+            'C3': {
+                name: 'Workout C: Defense Agility (Advanced)',
+                blocks: [
+                    {
+                        title: 'Superset 1 (4 Rounds - Rest 60-90s)',
+                        exercises: [
+                            { id: 'c3-1', name: 'Single-Arm DB Snatches', reps: '8 reps / arm', notes: 'Power from the hips.', video: 'Single-Arm Dumbbell Snatch' },
+                            { id: 'c3-2', name: 'Lateral Lunges', reps: '12 reps / leg', notes: 'Push hips back.', video: 'Lateral Lunges' },
+                            { id: 'c3-3', name: 'Skater Jumps', reps: '12 reps / side', notes: 'Explosive lateral push off outside leg.', video: 'Skater Jumps' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'c3-4', name: 'Push-Up to Renegade Row', reps: '10 reps / arm', notes: 'Keep hips square to floor.', video: 'Push-Up to Renegade Row' },
+                            { id: 'c3-5', name: 'Plank w/ Shoulder Taps', reps: '60 seconds', notes: 'Anti-rotation core hold.', video: 'Plank with Shoulder Taps' },
+                            { id: 'c3-6', name: 'Mountain Climbers', reps: '40 seconds', notes: 'Fast pace, keep hips level.', video: 'Mountain Climbers' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 3 (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'c3-7', name: 'Lateral Bounds', reps: '8 reps / side', notes: 'Jump sideways off one leg, stick landing.', video: 'Lateral Bounds' },
+                            { id: 'c3-8', name: 'Bear Crawls', reps: '30 seconds', notes: 'Keep knees hovering just off floor.', video: 'Bear Crawl' },
+                            { id: 'c3-9', name: 'High Knees', reps: '30 seconds', notes: 'Pump arms, drive knees up fast.', video: 'High Knees' }
+                        ]
+                    }
+                ],
+            },
+            'D3': {
+                name: 'Workout D: Core & Swing Mechanics (Advanced)',
+                blocks: [
+                    {
+                        title: 'Superset 1: Volleyball Core (3 Rounds - Rest 45s)',
+                        exercises: [
+                            { id: 'd3-1', name: 'Hollow Body Hold', reps: '60 seconds', notes: 'Mimics pre-swing mid-air tension. Press lower back into floor.', video: 'Hollow Body Hold' },
+                            { id: 'd3-2', name: 'Seated Rotational Twists', reps: '25 reps / side', notes: 'Focus on torso rotation to simulate arm swing torque.', video: 'Russian Twists' },
+                            { id: 'd3-3', name: 'Bird-Dog', reps: '15 reps / side', notes: 'Slow and controlled. Builds back and core stability.', video: 'Bird Dog Exercise' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 2: Swing Mechanics (3 Rounds - Rest as needed)',
+                        exercises: [
+                            { id: 'd3-4', name: 'Half-Kneeling Swings (Left Knee Up)', reps: '30 reps', notes: 'Left knee bent, right knee on floor. Focus on elbow draw and torque.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd3-5', name: 'Half-Kneeling Swings (Right Knee Up)', reps: '30 reps', notes: 'Right knee bent, left knee on floor. Maintain high elbow.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
+                            { id: 'd3-6', name: 'Tall Kneeling Swings', reps: '30 reps', notes: 'Both knees on floor. Engage core to snap through the swing.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' }
+                        ]
+                    },
+                    {
+                        title: 'Superset 3: Dynamic Approach (3 Rounds - Rest 60s)',
+                        exercises: [
+                            { id: 'd3-7', name: 'Standing Arm Swings', reps: '25 reps', notes: 'Full standing swing mechanics, focus on quick torque.', video: 'Volleyball Arm Swing Mechanics' },
+                            { id: 'd3-8', name: 'Approach Jump Footwork', reps: '10 reps', notes: 'Focus on explosive last two steps (penultimate step).', video: 'Volleyball Approach Footwork' },
+                            { id: 'd3-9', name: 'V-Ups or Med Ball Slams', reps: '15 reps', notes: 'Explosive core flexion.', video: 'V-Ups Exercise' }
+                        ]
+                    }
+                ]
             }
         };
 
@@ -583,27 +818,34 @@
         ];
 
         // State Management
-        let currentDayIndex = parseInt(localStorage.getItem('currentDayIndex')) || 0;
+        let currentDayIndex = (new Date().getDay() + 6) % 7; 
         let completedExercises = JSON.parse(localStorage.getItem('completedExercises')) || {};
         let completedDates = JSON.parse(localStorage.getItem('completedDates')) || {};
         let historyCalDate = new Date();
         let activeWorkoutStart = localStorage.getItem('activeWorkoutStart') || null;
+        
+        let workoutLevel = localStorage.getItem('workoutLevel') || 'beginner';
+        let manualLevelOverride = localStorage.getItem('manualLevelOverride') === 'true';
+
+        function getWorkoutKey(baseKey) {
+            if (baseKey === 'Rest/Run') return baseKey;
+            if (workoutLevel === 'advanced') return baseKey + '3';
+            if (workoutLevel === 'intermediate') return baseKey + '2';
+            return baseKey;
+        }
 
         function saveState() {
-            localStorage.setItem('currentDayIndex', currentDayIndex);
             localStorage.setItem('completedExercises', JSON.stringify(completedExercises));
             localStorage.setItem('completedDates', JSON.stringify(completedDates));
         }
 
-        // UI Functions
+        // Logic Functions
         function switchTab(tabId) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
             
-            // Scroll to top on mobile when switching tabs
             if(window.innerWidth <= 980) {
                 window.scrollTo({ top: document.getElementById('main').offsetTop - 20, behavior: 'smooth' });
             }
@@ -620,11 +862,38 @@
                 cardElement.classList.remove('completed');
                 cardElement.querySelector('input').checked = false;
             }
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const baseWorkoutKey = schedule[currentDayIndex].workout;
+            const workoutKey = getWorkoutKey(baseWorkoutKey);
+            const workout = workouts[workoutKey];
+            
+            if (!workout || !activeWorkoutStart) {
+                document.getElementById('progress-container').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('progress-container').style.display = 'block';
+            let totalEx = 0;
+            let checkedEx = 0;
+            
+            workout.blocks.forEach(block => {
+                block.exercises.forEach(ex => {
+                    totalEx++;
+                    if (completedExercises[ex.id]) checkedEx++;
+                });
+            });
+            
+            const pct = totalEx === 0 ? 0 : Math.round((checkedEx / totalEx) * 100);
+            document.getElementById('progress-bar').style.width = pct + '%';
         }
 
         function checkAndMarkComplete() {
-            const currentWorkoutKey = schedule[currentDayIndex].workout;
-            const workout = workouts[currentWorkoutKey];
+            const baseWorkoutKey = schedule[currentDayIndex].workout;
+            const workoutKey = getWorkoutKey(baseWorkoutKey);
+            const workout = workouts[workoutKey];
             if (!workout) return;
 
             let allChecked = true;
@@ -637,17 +906,17 @@
                 }
                 if (!allChecked) break;
             }
-
-            if (allChecked) {
-                markWorkoutComplete();
-            }
+            if (allChecked) markWorkoutComplete();
         }
 
         function resetDay() {
             if(confirm('Clear all checks for today?')) {
-                const currentWorkout = schedule[currentDayIndex].workout;
-                if(workouts[currentWorkout]) {
-                    workouts[currentWorkout].blocks.forEach(block => {
+                const baseWorkoutKey = schedule[currentDayIndex].workout;
+                const workoutKey = getWorkoutKey(baseWorkoutKey);
+                const currentWorkout = workouts[workoutKey];
+                
+                if(currentWorkout) {
+                    currentWorkout.blocks.forEach(block => {
                         block.exercises.forEach(ex => {
                             completedExercises[ex.id] = false;
                         });
@@ -666,10 +935,8 @@
             renderDaily();
             renderSchedule();
             
-            // Re-trigger the active tab state for Daily
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            
             document.getElementById('daily').classList.add('active');
             document.querySelectorAll('.nav button')[0].classList.add('active');
 
@@ -683,6 +950,7 @@
                 activeWorkoutStart = new Date().toISOString();
                 localStorage.setItem('activeWorkoutStart', activeWorkoutStart);
                 updateWorkoutStatus();
+                updateProgressBar();
             }
         }
 
@@ -691,7 +959,9 @@
             const startBtn = document.getElementById('btn-start-workout');
             const statusTxt = document.getElementById('workout-status');
 
-            const workout = workouts[schedule[currentDayIndex].workout];
+            const baseWorkoutKey = schedule[currentDayIndex].workout;
+            const workoutKey = getWorkoutKey(baseWorkoutKey);
+            const workout = workouts[workoutKey];
 
             if (!workout) {
                 if(controlsDiv) controlsDiv.style.display = 'none';
@@ -732,18 +1002,24 @@
                 durationText = ` (${mins} min)`;
             }
 
-            completedDates[dateStr] = {
-                completed: true,
-                startTime: activeWorkoutStart,
-                endTime: today.toISOString()
-            };
-            
+            completedDates[dateStr] = { completed: true, startTime: activeWorkoutStart, endTime: today.toISOString() };
             activeWorkoutStart = null;
             localStorage.removeItem('activeWorkoutStart');
 
             saveState();
             renderHistoryCalendar();
             updateWorkoutStatus();
+            updateProgressBar();
+            
+            // Auto Upgrade Logic
+            const completedCount = Object.keys(completedDates).length;
+            if (completedCount >= 16 && workoutLevel === 'intermediate' && !manualLevelOverride) {
+                setLevel('advanced', true);
+                alert("🔥 MAXIMUM OVERDRIVE! You've successfully logged four weeks of workouts. We've automatically upgraded your schedule to the Advanced plan!");
+            } else if (completedCount >= 8 && workoutLevel === 'beginner' && !manualLevelOverride) {
+                setLevel('intermediate', true);
+                alert("🎉 LEVEL UP! You've successfully logged two weeks of workouts. We've automatically upgraded your schedule to the Intermediate plan! Keep crushing it!");
+            }
             
             // Populate and Show Badge Modal
             document.getElementById('badge-date-text').innerHTML = `Date: <span>${displayDate}</span>`;
@@ -754,40 +1030,27 @@
             }
             document.getElementById('badge-modal').style.display = 'flex';
             
-            // Provide feedback on main button
             const btn = document.querySelector('.btn-complete');
             if (btn) {
                 const originalText = "Mark Workout Complete";
                 btn.innerText = `✔ Workout Logged!${durationText}`;
                 btn.style.background = "#4CAF50";
                 btn.style.borderColor = "#4CAF50";
-                
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.style.background = "";
-                    btn.style.borderColor = "";
-                }, 4000);
+                setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; btn.style.borderColor = ""; }, 4000);
             }
         }
 
-        function closeBadgeModal() {
-            document.getElementById('badge-modal').style.display = 'none';
-        }
+        function closeBadgeModal() { document.getElementById('badge-modal').style.display = 'none'; }
 
         function shareBadge() {
             const dateStr = document.getElementById('badge-date-text').innerText;
             const timeStr = document.getElementById('badge-time-text').innerText.replace(/\n/g, ' ');
             const workoutName = document.getElementById('current-workout-title').innerText;
-            
             const textToShare = `I just crushed "${workoutName}" on VolleyFit! 🏐💪\n${dateStr}\n${timeStr}`;
 
             if (navigator.share) {
-                navigator.share({
-                    title: 'VolleyFit Workout Complete',
-                    text: textToShare
-                }).catch(console.error);
+                navigator.share({ title: 'VolleyFit Workout Complete', text: textToShare }).catch(console.error);
             } else {
-                // Fallback to clipboard
                 const textArea = document.createElement("textarea");
                 textArea.value = textToShare;
                 document.body.appendChild(textArea);
@@ -798,9 +1061,7 @@
                     const origTxt = shareBtn.innerText;
                     shareBtn.innerText = "Copied to Clipboard!";
                     setTimeout(() => { shareBtn.innerText = origTxt; }, 3000);
-                } catch (err) {
-                    console.error('Failed to copy', err);
-                }
+                } catch (err) { console.error('Failed to copy', err); }
                 document.body.removeChild(textArea);
             }
         }
@@ -808,15 +1069,16 @@
         function renderDaily() {
             const content = document.getElementById('workout-content');
             const dayData = schedule[currentDayIndex];
-            const workout = workouts[dayData.workout];
+            const baseWorkoutKey = dayData.workout;
+            const workoutKey = getWorkoutKey(baseWorkoutKey);
+            const workout = workouts[workoutKey];
 
             if(!workout) {
                 document.getElementById('current-workout-title').innerText = "Active Recovery / Cardio";
-                content.innerHTML = `
-                    <div style="text-align:center; padding: 4em 0; background: var(--bg-panel); border: 1px solid var(--border); border-radius: 4px;">
-                        <h2 style="color:var(--text-main); border:none; margin-bottom: 0.5em;">Rest or Run Day</h2>
-                        <p style="color:var(--text-muted)">Focus on cardio, stretching, and recovery.</p>
-                    </div>`;
+                content.innerHTML = `<div style="text-align:center; padding: 4em 0; background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                        <h2 style="color:var(--text-main); border:none; margin-bottom: 0.5em; justify-content:center;">Rest or Run Day</h2>
+                        <p style="color:var(--text-muted)">Focus on cardio, stretching, and recovery.</p></div>`;
+                document.getElementById('progress-container').style.display = 'none';
                 return;
             }
 
@@ -828,7 +1090,6 @@
                 block.exercises.forEach(ex => {
                     const isChecked = completedExercises[ex.id] ? 'checked' : '';
                     const completedClass = completedExercises[ex.id] ? 'completed' : '';
-                    
                     const videoLink = ex.url ? ex.url : `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.video + ' tutorial')}`;
                     
                     html += `
@@ -840,129 +1101,92 @@
                                 <span class="title">${ex.name}</span>
                                 <span class="reps">${ex.reps}</span>
                                 <p class="notes">${ex.notes}</p>
-                                <a href="${videoLink}" target="_blank" class="video-link" onclick="event.stopPropagation()">Watch Example</a>
+                                <a href="${videoLink}" target="_blank" class="video-link" onclick="event.stopPropagation()">Watch</a>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
                 html += `</div>`;
             });
 
             content.innerHTML = html;
             updateWorkoutStatus();
-        }
-
-        function renderCalendar() {
-            const content = document.getElementById('calendar-content');
-            let html = '';
-
-            schedule.forEach((day, index) => {
-                const isToday = index === currentDayIndex ? 'today' : '';
-                const workoutName = workouts[day.workout] ? workouts[day.workout].name : 'Rest / Cardio';
-                
-                html += `
-                    <div class="calendar-day ${isToday}" onclick="setWorkoutDay(${index})">
-                        <h3>${day.day} ${isToday ? '<span style="color:var(--accent); font-size:0.8em; margin-left:0.5em;">(Active)</span>' : ''}</h3>
-                        <p>${workoutName}</p>
-                    </div>
-                `;
-            });
-
-            content.innerHTML = html;
+            updateProgressBar();
         }
 
         function renderSchedule() {
             const content = document.getElementById('schedule-content');
             let html = '';
-
             schedule.forEach((day, index) => {
                 const isToday = index === currentDayIndex ? 'today' : '';
-                const workoutName = workouts[day.workout] ? workouts[day.workout].name : 'Rest / Cardio';
+                const baseWorkoutKey = day.workout;
+                const workoutKey = getWorkoutKey(baseWorkoutKey);
+                const workoutName = workouts[workoutKey] ? workouts[workoutKey].name : 'Rest / Cardio';
                 
-                html += `
-                    <div class="calendar-day ${isToday}" onclick="setWorkoutDay(${index})">
+                html += `<div class="calendar-day ${isToday}" onclick="setWorkoutDay(${index})">
                         <h3>${day.day} ${isToday ? '<span style="color:var(--accent); font-size:0.8em; margin-left:0.5em;">(Active)</span>' : ''}</h3>
-                        <p>${workoutName}</p>
-                    </div>
-                `;
+                        <p style="color: var(--text-muted); font-size: 0.9em; margin-top: 0.25em;">${workoutName}</p></div>`;
             });
-
             content.innerHTML = html;
         }
 
         function renderHistoryCalendar() {
             const content = document.getElementById('month-grid-content');
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            
             const year = historyCalDate.getFullYear();
             const month = historyCalDate.getMonth();
 
             document.getElementById('month-year-display').innerText = `${monthNames[month]} ${year}`;
-
-            // Handle Nav Button States (Limit to end of 2026)
             document.getElementById('btn-next-month').disabled = (year >= 2026 && month >= 11);
 
-            const firstDay = new Date(year, month, 1).getDay(); // 0 (Sun) to 6 (Sat)
+            const firstDay = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            let html = `
-                <div class="month-day-header">Sun</div>
-                <div class="month-day-header">Mon</div>
-                <div class="month-day-header">Tue</div>
-                <div class="month-day-header">Wed</div>
-                <div class="month-day-header">Thu</div>
-                <div class="month-day-header">Fri</div>
-                <div class="month-day-header">Sat</div>
-            `;
+            let html = `<div class="month-day-header">Sun</div><div class="month-day-header">Mon</div><div class="month-day-header">Tue</div>
+                <div class="month-day-header">Wed</div><div class="month-day-header">Thu</div><div class="month-day-header">Fri</div><div class="month-day-header">Sat</div>`;
 
-            for (let i = 0; i < firstDay; i++) {
-                html += `<div class="month-date empty"></div>`;
-            }
-
+            for (let i = 0; i < firstDay; i++) html += `<div class="month-date empty"></div>`;
             for (let d = 1; d <= daysInMonth; d++) {
                 const mStr = String(month + 1).padStart(2, '0');
                 const dStr = String(d).padStart(2, '0');
                 const dateStr = `${year}-${mStr}-${dStr}`;
-
                 const isCompleted = completedDates[dateStr] ? 'completed' : '';
                 html += `<div class="month-date ${isCompleted}">${d}</div>`;
             }
-
             content.innerHTML = html;
         }
 
         function changeMonth(delta) {
             const newMonth = historyCalDate.getMonth() + delta;
             const tempDate = new Date(historyCalDate.getFullYear(), newMonth, 1);
-            
-            // Hard limit to end of 2026
             if (tempDate.getFullYear() > 2026) return;
-            
             historyCalDate = tempDate;
             renderHistoryCalendar();
         }
 
-        function checkDisclaimer() {
-            if (!localStorage.getItem('disclaimerAgreed')) {
-                document.getElementById('disclaimer-modal').style.display = 'flex';
-            }
+        function setLevel(level, auto = false) {
+            workoutLevel = level;
+            localStorage.setItem('workoutLevel', level);
+            if (!auto) { manualLevelOverride = true; localStorage.setItem('manualLevelOverride', 'true'); }
+            
+            document.getElementById('btn-level-beginner').classList.toggle('active', level === 'beginner');
+            document.getElementById('btn-level-intermediate').classList.toggle('active', level === 'intermediate');
+            document.getElementById('btn-level-advanced').classList.toggle('active', level === 'advanced');
+            
+            renderDaily();
+            renderSchedule();
         }
 
-        function acceptDisclaimer() {
-            localStorage.setItem('disclaimerAgreed', 'true');
-            document.getElementById('disclaimer-modal').style.display = 'none';
-        }
-
-        function openPrivacyModal() {
-            document.getElementById('privacy-modal').style.display = 'flex';
-        }
-
-        function closePrivacyModal() {
-            document.getElementById('privacy-modal').style.display = 'none';
-        }
+        function checkDisclaimer() { if (!localStorage.getItem('disclaimerAgreed')) document.getElementById('disclaimer-modal').style.display = 'flex'; }
+        function acceptDisclaimer() { localStorage.setItem('disclaimerAgreed', 'true'); document.getElementById('disclaimer-modal').style.display = 'none'; }
+        function openPrivacyModal() { document.getElementById('privacy-modal').style.display = 'flex'; }
+        function closePrivacyModal() { document.getElementById('privacy-modal').style.display = 'none'; }
 
         // Initialize App
         checkDisclaimer();
+        document.getElementById('btn-level-beginner').classList.toggle('active', workoutLevel === 'beginner');
+        document.getElementById('btn-level-intermediate').classList.toggle('active', workoutLevel === 'intermediate');
+        document.getElementById('btn-level-advanced').classList.toggle('active', workoutLevel === 'advanced');
+        
         renderDaily();
         renderSchedule();
         renderHistoryCalendar();
