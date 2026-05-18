@@ -392,11 +392,13 @@
         .btn-close-modal { background: transparent; color: var(--text-muted); border-color: var(--text-muted); width: 100%; padding: 1em; margin-top: 0; }
         .btn-close-modal:hover { border-color: var(--text-main); color: var(--text-main); }
 
-        #disclaimer-modal .modal-content { max-width: 550px; text-align: left; }
-        #disclaimer-modal h2 { text-align: center; color: var(--accent); margin-bottom: 1em; font-size: 1.5em; }
+        #disclaimer-modal .modal-content { max-width: 550px; width: calc(100vw - 100px); min-width: 280px; max-height: calc(100vh - 100px); display: flex; flex-direction: column; text-align: left; padding: 2em 1.5em; }
+        #disclaimer-modal h2 { text-align: center; color: var(--accent); margin-bottom: 0.5em; font-size: 1.5em; flex-shrink: 0; }
+        .scroll-note { text-align: center; color: var(--accent); font-size: 0.85em; font-style: italic; margin-bottom: 1em; flex-shrink: 0; }
+        .disclaimer-text-scroll { overflow-y: auto; flex-grow: 1; padding-right: 0.5em; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 1em; padding-top: 1em; }
         #disclaimer-modal p { font-size: 0.95em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6; }
         #disclaimer-modal .strong-disclaimer { font-weight: 700; text-transform: uppercase; font-size: 0.85em; color: var(--text-muted); text-align: center; margin-bottom: 2em; letter-spacing: 0.05em; }
-        .btn-agree { appearance: none; border: none; border-radius: var(--radius-sm); background: var(--text-main); color: #ffffff; margin-top: 1.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
+        .btn-agree { flex-shrink: 0; appearance: none; border: none; border-radius: var(--radius-sm); background: var(--text-main); color: #ffffff; margin-top: 0.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
         .btn-agree:hover { background: var(--text-muted); }
 
         /* Responsive Design */
@@ -505,11 +507,14 @@
     <div id="disclaimer-modal" class="modal-overlay">
         <div class="modal-content">
             <h2>Medical Disclaimer & Terms of Use</h2>
-            <p class="strong-disclaimer">Please read carefully before proceeding.</p>
-            <p>The exercises, workouts, and information provided on this page are for <strong>educational and example purposes only</strong>. They are not intended as a substitute for professional medical advice, diagnosis, or treatment.</p>
-            <p><strong>Always consult with a qualified healthcare provider or physician</strong> before beginning any new exercise program or fitness regimen. You should be in good physical condition and be able to participate safely in the exercises.</p>
-            <p>By using this application, you understand and agree that there is an inherent risk of injury associated with participating in any physical activity. You assume all risks and voluntarily choose to participate at your own free will.</p>
-            <p>The creator(s), host(s), and authors of this page explicitly disclaim any liability, loss, or risk, personal or otherwise, which is incurred as a consequence, directly or indirectly, of the use and application of any of the contents herein. <strong>You agree to indemnify and hold harmless the creator(s) from any and all claims, demands, or causes of action arising out of your use of this site.</strong></p>
+            <p class="scroll-note">Please scroll to the bottom to read and agree.</p>
+            <div class="disclaimer-text-scroll">
+                <p class="strong-disclaimer">Please read carefully before proceeding.</p>
+                <p>The exercises, workouts, and information provided on this page are for <strong>educational and example purposes only</strong>. They are not intended as a substitute for professional medical advice, diagnosis, or treatment.</p>
+                <p><strong>Always consult with a qualified healthcare provider or physician</strong> before beginning any new exercise program or fitness regimen. You should be in good physical condition and be able to participate safely in the exercises.</p>
+                <p>By using this application, you understand and agree that there is an inherent risk of injury associated with participating in any physical activity. You assume all risks and voluntarily choose to participate at your own free will.</p>
+                <p>The creator(s), host(s), and authors of this page explicitly disclaim any liability, loss, or risk, personal or otherwise, which is incurred as a consequence, directly or indirectly, of the use and application of any of the contents herein. <strong>You agree to indemnify and hold harmless the creator(s) from any and all claims, demands, or causes of action arising out of your use of this site.</strong></p>
+            </div>
             <button class="btn-agree" onclick="acceptDisclaimer()">I Understand and Agree</button>
         </div>
     </div>
@@ -686,7 +691,8 @@
                             { id: 'd2-5', name: 'Half-Kneeling Swings (Left Knee Up)', reps: '25 reps', notes: 'Left knee bent, right knee on floor. Focus on elbow draw and torque.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
                             { id: 'd2-6', name: 'Half-Kneeling Swings (Right Knee Up)', reps: '25 reps', notes: 'Right knee bent, left knee on floor. Maintain high elbow.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
                             { id: 'd2-7', name: 'Tall Kneeling Swings', reps: '25 reps', notes: 'Both knees on floor. Engage core to snap through the swing.', video: 'Swing Mechanics', url: 'https://www.youtube.com/watch?v=X2TLr7aLors' },
-                            { id: 'd2-8', name: 'Standing Arm Swings', reps: '20 reps', notes: 'Full standing swing mechanics, focus on quick torque.', video: 'Volleyball Arm Swing Mechanics' }
+                            { id: 'd2-8', name: 'Standing Arm Swings', reps: '20 reps', notes: 'Full standing swing mechanics, focus on quick torque.', video: 'Volleyball Arm Swing Mechanics' },
+                            { id: 'd2-9', name: 'Approach Jumps w/ 2-Foot Landing', reps: '10 reps', notes: 'Full approach jump. Prioritize landing softly on BOTH feet simultaneously to absorb impact.', video: 'Volleyball 2-Foot Landing', url: 'https://www.tiktok.com/@elevateyourselfofficial/video/7112060380637056299' }
                         ]
                     }
                 ]
@@ -802,7 +808,8 @@
                         exercises: [
                             { id: 'd3-7', name: 'Standing Arm Swings', reps: '25 reps', notes: 'Full standing swing mechanics, focus on quick torque.', video: 'Volleyball Arm Swing Mechanics' },
                             { id: 'd3-8', name: 'Approach Jump Footwork', reps: '10 reps', notes: 'Focus on explosive last two steps (penultimate step).', video: 'Volleyball Approach Footwork' },
-                            { id: 'd3-9', name: 'V-Ups or Med Ball Slams', reps: '15 reps', notes: 'Explosive core flexion.', video: 'V-Ups Exercise' }
+                            { id: 'd3-9', name: 'V-Ups or Med Ball Slams', reps: '15 reps', notes: 'Explosive core flexion.', video: 'V-Ups Exercise' },
+                            { id: 'd3-10', name: 'Max Approach Jumps w/ 2-Foot Landing', reps: '10 reps', notes: 'Full max approach. Prioritize landing softly on BOTH feet simultaneously to absorb impact.', video: 'Volleyball 2-Foot Landing', url: 'https://www.tiktok.com/@elevateyourselfofficial/video/7112060380637056299' }
                         ]
                     }
                 ]
