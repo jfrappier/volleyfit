@@ -17,12 +17,6 @@
 
 > **VolleyFit** is a mobile-responsive web application designed to help players track their training. It runs completely in the browser, meaning there is no backend, no database setup, and no complex installation required. It is built to be lightweight, fast, and heavily focused on privacy.
 
-## 📸 See It In Action
-
-<div align="center">
-  <img src="https://via.placeholder.com/600x400/f2f2f2/414f57?text=Drop+a+Mobile+Screenshot+Here" alt="VolleyFit Screenshot" width="600">
-</div>
-
 ## ✨ Core Features
 
 * 📈 **Progressive Workout Tiers:** Automatically scales from Beginner (2 exercises per superset) to Intermediate and Advanced (3x3 supersets) based on your workout completion history.
