@@ -13,16 +13,16 @@
             --bg-panel: #ffffff;
             --text-main: #2d3748; /* Deeper slate for better contrast */
             --text-muted: #718096;
-            --accent: #ed786a; 
-            --accent-hover: #e86453;
-            --accent-light: #fef1f0; /* Soft background for pills */
+            --accent: #e80a89; 
+            --accent-hover: #c90875;
+            --accent-light: #fce8f3; /* Soft background for pills */
             --border: #e2e8f0;
             --radius-sm: 8px;
             --radius-md: 12px;
             --radius-lg: 16px;
             --shadow-sm: 0 2px 4px rgba(0,0,0,0.02);
             --shadow-md: 0 4px 12px rgba(0,0,0,0.05);
-            --shadow-hover: 0 10px 25px rgba(237, 120, 106, 0.15);
+            --shadow-hover: 0 10px 25px rgba(232, 10, 137, 0.15);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -67,15 +67,16 @@
             z-index: 10;
         }
 
-        /* Gradient Branding */
+        /* Logo Branding */
         #header h1 {
-            font-size: 2.5em;
-            line-height: 1.2;
-            margin-bottom: 0.1em;
-            background: linear-gradient(135deg, var(--text-main) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 0.1em;
+            margin-bottom: 0.25em;
+        }
+
+        .header-logo {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+            display: block;
         }
 
         #header p {
@@ -172,7 +173,7 @@
         }
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), #ff998c);
+            background: linear-gradient(90deg, var(--accent), #ff66ba);
             width: 0%;
             border-radius: 20px;
             transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -377,11 +378,11 @@
         .calendar-day:hover { border-left-color: var(--accent); transform: translateX(4px); box-shadow: var(--shadow-md); }
         .calendar-day.today { border-left-color: var(--accent); background: #ffffff; box-shadow: var(--shadow-hover); }
 
-        /* Modals... (Kept identical to your previous code, just updated radius/shadow vars) */
+        /* Modals */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; animation: fadeIn 0.3s ease-in-out; backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-panel); padding: 3em 2em; border-radius: var(--radius-lg); text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; }
         .modal-content h2 { margin-bottom: 0.5em; color: var(--text-main); }
-        .badge-svg { width: 120px; height: 120px; margin: 0 auto 1.5em auto; display: block; filter: drop-shadow(0 10px 15px rgba(237,120,106,0.3));}
+        .badge-svg { width: 120px; height: 120px; margin: 0 auto 1.5em auto; display: block; filter: drop-shadow(0 10px 15px rgba(232, 10, 137, 0.3));}
         .badge-details { background: var(--bg-body); padding: 1.5em; border-radius: var(--radius-sm); margin-bottom: 2em; border: 1px solid var(--border); }
         .badge-details p { margin: 0.25em 0; font-weight: 600; color: var(--text-muted); font-size: 0.9em; letter-spacing: 0.05em; text-transform: uppercase;}
         .badge-details p span { color: var(--text-main); }
@@ -402,6 +403,7 @@
         @media screen and (max-width: 980px) {
             #wrapper { flex-direction: column; }
             #header { width: 100%; height: auto; position: relative; padding: 3em 2em; border-right: none; border-bottom: solid 1px var(--border); text-align: center; }
+            .header-logo { margin: 0 auto; }
             .nav { flex-direction: row; justify-content: center; flex-wrap: wrap; }
             .nav button { width: auto; padding: 1em 1.5em; }
             #main { width: 100%; padding: 3em 1.5em; }
@@ -425,7 +427,7 @@
 
     <div id="wrapper">
         <header id="header">
-            <h1>VolleyFit</h1>
+            <h1><img src="logo.png" alt="VolleyFit" class="header-logo"></h1>
             <p id="current-workout-title">30-Min Power Program</p>
             <div class="nav">
                 <button class="active" onclick="switchTab('daily')">Today's Workout</button>
@@ -483,7 +485,7 @@
     <div id="badge-modal" class="modal-overlay">
         <div class="modal-content">
             <svg class="badge-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#ed786a" />
+                <circle cx="50" cy="50" r="45" fill="#e80a89" />
                 <path d="M30 45 L45 60 L75 30" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
                 <text x="50" y="82" font-family="'Source Sans Pro', sans-serif" font-size="12" fill="white" font-weight="700" letter-spacing="1" text-anchor="middle">VOLLEYFIT</text>
             </svg>
@@ -531,7 +533,7 @@
                     {
                         title: 'Superset 1 (4 Rounds - Rest 60-90s)',
                         exercises: [
-                            { id: 'a1', name: 'Seated Box Jumps', reps: '5 reps', notes: 'Explode up, jump down, and land on two feet.', video: 'Seated Box Jumps' },
+                            { id: 'a1', name: 'Seated Box Jumps', reps: '5 reps', notes: 'Explode up, step down.', video: 'Seated Box Jumps' },
                             { id: 'a2', name: 'Pogo Jumps', reps: '15 seconds', notes: 'Max ankle stiffness.', video: 'Pogo Jumps exercise' }
                         ]
                     },
@@ -550,9 +552,9 @@
                     {
                         title: 'Superset 1 (4 Rounds - Rest 60-90s)',
                         exercises: [
-                            { id: 'a2-1', name: 'Seated Box Jumps', reps: '5 reps', notes: 'Explode up, jump down, and land on two feet.', video: 'Seated Box Jumps' },
+                            { id: 'a2-1', name: 'Seated Box Jumps', reps: '5 reps', notes: 'Explode up, step down softly.', video: 'Seated Box Jumps' },
                             { id: 'a2-2', name: 'Pogo Jumps', reps: '20 seconds', notes: 'Max ankle stiffness and height.', video: 'Pogo Jumps exercise' },
-                            { id: 'a2-3', name: 'Broad Jumps', reps: '5 reps', notes: 'Explode forward, stick the landing on two feet.', video: 'Broad Jumps' }
+                            { id: 'a2-3', name: 'Broad Jumps', reps: '5 reps', notes: 'Explode forward, stick the landing.', video: 'Broad Jumps' }
                         ]
                     },
                     {
@@ -695,9 +697,9 @@
                     {
                         title: 'Superset 1 (4 Rounds - Rest 60-90s)',
                         exercises: [
-                            { id: 'a3-1', name: 'Seated Box Jumps', reps: '6 reps', notes: 'Explode up, jump down, and land on two feet.', video: 'Seated Box Jumps' },
+                            { id: 'a3-1', name: 'Seated Box Jumps', reps: '6 reps', notes: 'Explode up, step down softly.', video: 'Seated Box Jumps' },
                             { id: 'a3-2', name: 'Pogo Jumps', reps: '30 seconds', notes: 'Max ankle stiffness and height.', video: 'Pogo Jumps exercise' },
-                            { id: 'a3-3', name: 'Broad Jumps', reps: '6 reps', notes: 'Explode forward, stick the landing with two feet.', video: 'Broad Jumps' }
+                            { id: 'a3-3', name: 'Broad Jumps', reps: '6 reps', notes: 'Explode forward, stick the landing.', video: 'Broad Jumps' }
                         ]
                     },
                     {
