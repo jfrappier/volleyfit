@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://raw.githubusercontent.com/jfrappier/volleyfit/refs/heads/main/logo.png" alt="VolleyFit Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png" alt="VolleyFit Banner" width="100%">
 
   *A zero-dependency, progressive 30-minute daily power program for volleyball players.*
 
