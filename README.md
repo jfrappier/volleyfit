@@ -29,10 +29,13 @@
 Because VolleyFit is a static application, you do not need a package manager, build tools, or a local server to run it. 
 
 ### Local Execution
+
 To run the app on your own machine, simply download or clone the repository and open the `index.html` file in any modern web browser. The app will immediately initialize and create the necessary local storage keys to begin tracking your progress.
 
 ### Live Hosting via GitHub Pages
+
 The easiest way to share this application with other players is to host it via GitHub Pages. 
+
 1. Navigate to the **Settings** tab of your repository.
 2. Select **Pages** from the left-hand sidebar.
 3. Under the **Build and deployment** source dropdown, select **Deploy from a branch**.
@@ -41,6 +44,7 @@ The easiest way to share this application with other players is to host it via G
 GitHub will provide a live URL where the application can be accessed, perfectly formatted for mobile devices.
 
 ## 🔄 Resetting Data
+
 If you need to clear your progress and start the program over, you can use the "Reset Today's Progress" button for a single day, or simply clear your browser's site data/local storage to wipe the application completely clean.
 
 ---
