@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png" alt="VolleyFit Banner" width="100%">
+  <img src="https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png" alt="SpikeFit Banner" width="100%">
 
   *A zero-dependency, progressive 30-minute daily power program for volleyball players.*
 
@@ -15,7 +15,7 @@
 
 > This page is set up for my own personal use. If you decide to use this, I am not liable for any injury sustained, lack of progression, etc. This is not a commerical application.
 
-**VolleyFit** is a mobile-responsive web application designed to help players track their training. It runs completely in the browser, meaning there is no backend, no database setup, and no complex installation required. It is built to be lightweight, fast, and heavily focused on privacy.
+**SpikeFit** is a mobile-responsive web application designed to help players track their training. It runs completely in the browser, meaning there is no backend, no database setup, and no complex installation required. It is built to be lightweight, fast, and heavily focused on privacy.
 
 ## ✨ Core Features
 
@@ -26,7 +26,7 @@
 
 ## 🚀 Getting Started
 
-Because VolleyFit is a static application, you do not need a package manager, build tools, or a local server to run it. 
+Because SpikeFit is a static application, you do not need a package manager, build tools, or a local server to run it. 
 
 ### Local Execution
 
