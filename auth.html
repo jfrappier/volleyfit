@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Sign in — SpikeFit</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body:    #f4f6f8;
+      --bg-panel:   #ffffff;
+      --text-main:  #2d3748;
+      --text-muted: #718096;
+      --accent:     #e80a89;
+      --accent-hover: #c90875;
+      --accent-light: #fce8f3;
+      --border:     #e2e8f0;
+      --radius-sm:  8px;
+      --radius-md:  12px;
+      --shadow-md:  0 4px 12px rgba(0,0,0,0.05);
+      --shadow-hover: 0 10px 25px rgba(232,10,137,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-muted);
+      font-family: 'Source Sans Pro', Helvetica, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 3em 2.5em;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 180px;
+      height: auto;
+      display: block;
+      margin: 0 auto 2em;
+    }
+
+    h1 {
+      color: var(--text-main);
+      font-size: 1.4em;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.4em;
+    }
+
+    .subtitle {
+      font-size: 0.95em;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 2em;
+    }
+
+    .subtitle strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      font-size: 0.8em;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      background: var(--bg-body);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-main);
+      font-family: 'Source Sans Pro', Helvetica, sans-serif;
+      font-size: 1em;
+      padding: 0.85em 1em;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-light);
+      background: var(--bg-panel);
+    }
+
+    input::placeholder { color: #cbd5e0; }
+
+    input#otp-input {
+      font-size: 2em;
+      font-weight: 700;
+      letter-spacing: 0.35em;
+      text-align: center;
+      color: var(--text-main);
+      padding: 0.6em 0.5em;
+    }
+
+    .btn {
+      appearance: none;
+      display: block;
+      width: 100%;
+      margin-top: 1.25em;
+      padding: 1em;
+      background: var(--accent);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-sm);
+      color: #ffffff;
+      font-family: 'Source Sans Pro', Helvetica, sans-serif;
+      font-size: 0.9em;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s, transform 0.1s;
+    }
+
+    .btn:hover:not(:disabled) {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .btn:active:not(:disabled) { transform: scale(0.99); }
+
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .btn.loading { color: transparent; position: relative; }
+    .btn.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 18px; height: 18px;
+      margin: -9px 0 0 -9px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-muted);
+      margin-top: 0.75em;
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      border-color: var(--text-main);
+      color: var(--text-main);
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .error {
+      margin-top: 0.75em;
+      font-size: 0.875em;
+      color: #e53e3e;
+      min-height: 1.2em;
+      text-align: left;
+    }
+
+    .hint {
+      font-size: 0.8em;
+      color: var(--text-muted);
+      margin-top: 0.5em;
+      text-align: left;
+    }
+
+    .step { animation: fadeUp 0.25s cubic-bezier(0.16,1,0.3,1); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .success-icon {
+      width: 64px; height: 64px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5em;
+      font-size: 1.8em;
+    }
+
+    @media (max-width: 480px) {
+      .card { padding: 2em 1.5em; }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+
+  <!-- Step 1: Email -->
+  <div id="step-email" class="step">
+    <img
+      src="logo.png"
+      alt="SpikeFit"
+      class="logo"
+      onerror="this.src='https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png'"
+    >
+    <h1>Sign In</h1>
+    <p class="subtitle">Enter your email and we'll send you a one-time code.</p>
+
+    <label for="email-input">Email address</label>
+    <input
+      type="email"
+      id="email-input"
+      placeholder="you@example.com"
+      autocomplete="email"
+      autofocus
+    >
+    <div class="error" id="email-error"></div>
+    <button class="btn" id="email-btn" onclick="sendOtp()">Send Code</button>
+  </div>
+
+  <!-- Step 2: OTP -->
+  <div id="step-otp" class="step" style="display:none">
+    <img
+      src="logo.png"
+      alt="SpikeFit"
+      class="logo"
+      onerror="this.src='https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png'"
+    >
+    <h1>Check Your Email</h1>
+    <p class="subtitle" id="otp-subtitle">We sent a 6-digit code to your email.</p>
+
+    <label for="otp-input">One-time code</label>
+    <input
+      type="text"
+      id="otp-input"
+      placeholder="000000"
+      maxlength="6"
+      inputmode="numeric"
+      autocomplete="one-time-code"
+    >
+    <p class="hint">Code expires in 10 minutes.</p>
+    <div class="error" id="otp-error"></div>
+    <button class="btn" id="otp-btn" onclick="verifyOtp()">Verify Code</button>
+    <button class="btn btn-ghost" onclick="goBack()">← Use a different email</button>
+  </div>
+
+  <!-- Step 3: Success -->
+  <div id="step-success" class="step" style="display:none">
+    <div class="success-icon">✓</div>
+    <h1>You're In</h1>
+    <p class="subtitle">Redirecting you to your workout…</p>
+  </div>
+
+</div>
+
+<script>
+  const COOKIE = 'sf_session';
+  const SESSION_DAYS = 30;
+
+  let emailValue = '';
+
+  // Auto-submit when 6 digits entered
+  document.getElementById('otp-input').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+    if (e.target.value.length === 6) verifyOtp();
+  });
+
+  document.getElementById('email-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sendOtp();
+  });
+
+  document.getElementById('otp-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') verifyOtp();
+  });
+
+  async function sendOtp() {
+    const email = document.getElementById('email-input').value.trim();
+    const errEl = document.getElementById('email-error');
+    const btn   = document.getElementById('email-btn');
+
+    if (!email || !email.includes('@')) {
+      errEl.textContent = 'Please enter a valid email address.';
+      return;
+    }
+
+    errEl.textContent = '';
+    setLoading(btn, true);
+
+    try {
+      const res = await fetch('/auth/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      if (res.status === 403) {
+        errEl.textContent = "You don't have access. Ask for an invite.";
+        return;
+      }
+      if (!res.ok) {
+        errEl.textContent = 'Something went wrong — please try again.';
+        return;
+      }
+
+      emailValue = email;
+      document.getElementById('otp-subtitle').textContent =
+        `We sent a 6-digit code to ${email}.`;
+      showStep('step-otp');
+      document.getElementById('otp-input').focus();
+
+    } catch {
+      errEl.textContent = 'Network error. Check your connection.';
+    } finally {
+      setLoading(btn, false);
+    }
+  }
+
+  async function verifyOtp() {
+    const code  = document.getElementById('otp-input').value.trim();
+    const errEl = document.getElementById('otp-error');
+    const btn   = document.getElementById('otp-btn');
+
+    if (code.length !== 6) {
+      errEl.textContent = 'Enter the 6-digit code from your email.';
+      return;
+    }
+
+    errEl.textContent = '';
+    setLoading(btn, true);
+
+    try {
+      const res = await fetch('/auth/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailValue, code })
+      });
+
+      if (!res.ok) {
+        errEl.textContent = 'Incorrect or expired code — try again.';
+        document.getElementById('otp-input').value = '';
+        return;
+      }
+
+      // Worker sets the HttpOnly cookie; we just redirect
+      showStep('step-success');
+      const params = new URLSearchParams(window.location.search);
+      setTimeout(() => {
+        window.location.href = params.get('redirect') || '/';
+      }, 800);
+
+    } catch {
+      errEl.textContent = 'Network error. Check your connection.';
+    } finally {
+      setLoading(btn, false);
+    }
+  }
+
+  function goBack() {
+    document.getElementById('otp-input').value = '';
+    document.getElementById('otp-error').textContent = '';
+    showStep('step-email');
+    document.getElementById('email-input').focus();
+  }
+
+  function showStep(id) {
+    ['step-email', 'step-otp', 'step-success'].forEach(s => {
+      const el = document.getElementById(s);
+      el.style.display = s === id ? 'block' : 'none';
+      if (s === id) el.classList.add('step');
+    });
+  }
+
+  function setLoading(btn, on) {
+    btn.disabled = on;
+    btn.classList.toggle('loading', on);
+  }
+</script>
+</body>
+</html>
