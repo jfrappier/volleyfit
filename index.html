@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SpikeFit: 30-Min Power</title>
+    <title>SpikeFit: 30-Min Workouts</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <style>
@@ -206,9 +206,11 @@
         #main {
             width: 70%;
             padding: 4em 5em;
+            display: flex;
+            flex-direction: column;
         }
 
-        .container { display: none; max-width: 800px; margin: 0 auto; }
+        .container { display: none; max-width: 800px; margin: 0 auto; width: 100%; flex: 1; }
         .container.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
         @keyframes fadeIn {
@@ -493,6 +495,49 @@
         .btn-agree { flex-shrink: 0; appearance: none; border: none; border-radius: var(--radius-sm); background: var(--text-main); color: #ffffff; margin-top: 0.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
         .btn-agree:hover { background: var(--text-muted); }
 
+        /* --- NEW: Footer Styles --- */
+        #site-footer {
+            margin-top: auto;
+            padding-top: 3em;
+            border-top: solid 1px var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1em;
+            width: 100%;
+            max-width: 800px;
+            align-self: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5em;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: color 0.2s ease;
+            font-size: 0.9em;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .footer-links .separator {
+            color: var(--border);
+        }
+
         /* Responsive Design */
         @media screen and (max-width: 980px) {
             #wrapper { flex-direction: column; }
@@ -572,6 +617,15 @@
             .level-toggle button { margin-bottom: 0.25em; }
             .month-grid { gap: 0.25em; }
             .month-date { padding: 1em 0; font-size: 0.9em; }
+
+            /* Footer Mobile */
+            .footer-links {
+                flex-direction: column;
+                gap: 0.8em;
+            }
+            .footer-links .separator {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -640,6 +694,15 @@
                 <div class="month-grid" id="month-grid-content">
                     </div>
             </div>
+
+            <!-- Global Footer inside Main Panel -->
+            <footer id="site-footer">
+                <div class="footer-links">
+                    <a href="#" onclick="event.preventDefault(); openPrivacyModal();">Data Privacy</a>
+                    <span class="separator">|</span>
+                    <a href="#" onclick="event.preventDefault(); openDisclaimerModal();">Terms & Disclaimer</a>
+                </div>
+            </footer>
         </main>
     </div>
 
@@ -1373,10 +1436,19 @@
 
         function checkDisclaimer() { 
             if (!localStorage.getItem('disclaimerAgreed')) {
-                document.getElementById('disclaimer-modal').style.display = 'flex'; 
+                openDisclaimerModal(); 
             }
         }
-        function acceptDisclaimer() { localStorage.setItem('disclaimerAgreed', 'true'); document.getElementById('disclaimer-modal').style.display = 'none'; }
+        
+        function openDisclaimerModal() {
+            document.getElementById('disclaimer-modal').style.display = 'flex';
+        }
+
+        function acceptDisclaimer() { 
+            localStorage.setItem('disclaimerAgreed', 'true'); 
+            document.getElementById('disclaimer-modal').style.display = 'none'; 
+        }
+
         function openPrivacyModal() { 
             document.getElementById('privacy-modal').style.display = 'flex'; 
             const nav = document.getElementById('main-nav');
