@@ -538,6 +538,67 @@
             color: var(--border);
         }
 
+        /* --- NEW: Toast Notification --- */
+        .toast-container {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(150px);
+            background: var(--bg-panel);
+            border: 2px solid var(--accent);
+            border-radius: var(--radius-lg);
+            padding: 1.25em 1.5em;
+            box-shadow: 0 10px 30px rgba(232, 10, 137, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1em;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 90%;
+            max-width: 400px;
+        }
+        .toast-container.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        .toast-icon {
+            font-size: 2.2em;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+        .toast-content {
+            flex: 1;
+            text-align: left;
+        }
+        .toast-title {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1.05em;
+            margin-bottom: 0.2em;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .toast-text {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.8em;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .toast-close:hover {
+            color: var(--accent);
+        }
+
         /* Responsive Design */
         @media screen and (max-width: 980px) {
             #wrapper { flex-direction: column; }
@@ -750,6 +811,16 @@
             <p style="font-size: 0.9em; margin-bottom: 1em; color: var(--text-main); line-height: 1.6;"><strong>3. GDPR, CCPA, & Compliance:</strong> Because we do not collect, process, sell, or control your personal data or Personally Identifiable Information (PII), we inherently align with data minimization principles. You retain 100% control over your data. To permanently delete all your data, simply clear your browser's local storage or cache.</p>
             <button class="btn-reset btn-close-modal" style="margin-top: 1.5em;" onclick="closePrivacyModal()">Close Privacy Policy</button>
         </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="snack-toast" class="toast-container">
+        <div class="toast-icon">🥤</div>
+        <div class="toast-content">
+            <div class="toast-title">Time to Refuel!</div>
+            <div class="toast-text">Don't forget to grab a protein shake or a healthy snack for recovery.</div>
+        </div>
+        <button class="toast-close" onclick="closeSnackToast()">&times;</button>
     </div>
 
     <script>
@@ -1294,7 +1365,25 @@
             }
         }
 
-        function closeBadgeModal() { document.getElementById('badge-modal').style.display = 'none'; }
+        function closeBadgeModal() { 
+            document.getElementById('badge-modal').style.display = 'none'; 
+            
+            // Show snack reminder toast after closing the badge
+            setTimeout(() => {
+                const toast = document.getElementById('snack-toast');
+                if (toast) {
+                    toast.classList.add('show');
+                    // Auto-hide after 8 seconds
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 8000);
+                }
+            }, 400); // Slight delay for smooth transition
+        }
+
+        function closeSnackToast() {
+            document.getElementById('snack-toast').classList.remove('show');
+        }
 
         function shareBadge() {
             const dateStr = document.getElementById('badge-date-text').innerText;
