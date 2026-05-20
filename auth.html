@@ -6,37 +6,64 @@
   <title>Sign in — SpikeFit</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-300.woff2') format('woff2');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+ 
     :root {
-      --bg-body:    #f4f6f8;
-      --bg-panel:   #ffffff;
-      --text-main:  #2d3748;
-      --text-muted: #718096;
-      --accent:     #e80a89;
+      --bg-body:      #f4f6f8;
+      --bg-panel:     #ffffff;
+      --text-main:    #2d3748;
+      --text-muted:   #718096;
+      --accent:       #e80a89;
       --accent-hover: #c90875;
       --accent-light: #fce8f3;
-      --border:     #e2e8f0;
-      --radius-sm:  8px;
-      --radius-md:  12px;
-      --shadow-md:  0 4px 12px rgba(0,0,0,0.05);
+      --border:       #e2e8f0;
+      --radius-sm:    8px;
+      --radius-md:    12px;
+      --shadow-md:    0 4px 12px rgba(0,0,0,0.05);
       --shadow-hover: 0 10px 25px rgba(232,10,137,0.15);
     }
-
+ 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
     body {
       background: var(--bg-body);
       color: var(--text-muted);
-      font-family: 'Source Sans Pro', Helvetica, sans-serif;
+      font-family: 'Source Sans 3', Helvetica, sans-serif;
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
     }
-
+ 
     .card {
       background: var(--bg-panel);
       border: 1px solid var(--border);
@@ -47,14 +74,14 @@
       max-width: 400px;
       text-align: center;
     }
-
+ 
     .logo {
       width: 180px;
       height: auto;
       display: block;
       margin: 0 auto 2em;
     }
-
+ 
     h1 {
       color: var(--text-main);
       font-size: 1.4em;
@@ -63,19 +90,19 @@
       text-transform: uppercase;
       margin-bottom: 0.4em;
     }
-
+ 
     .subtitle {
       font-size: 0.95em;
       color: var(--text-muted);
       line-height: 1.6;
       margin-bottom: 2em;
     }
-
+ 
     .subtitle strong {
       color: var(--accent);
       font-weight: 600;
     }
-
+ 
     label {
       display: block;
       text-align: left;
@@ -86,29 +113,29 @@
       color: var(--text-muted);
       margin-bottom: 8px;
     }
-
+ 
     input {
       width: 100%;
       background: var(--bg-body);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text-main);
-      font-family: 'Source Sans Pro', Helvetica, sans-serif;
+      font-family: 'Source Sans 3', Helvetica, sans-serif;
       font-size: 1em;
       padding: 0.85em 1em;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
     }
-
+ 
     input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
       background: var(--bg-panel);
     }
-
+ 
     input::placeholder { color: #cbd5e0; }
-
+ 
     input#otp-input {
       font-size: 2em;
       font-weight: 700;
@@ -117,7 +144,7 @@
       color: var(--text-main);
       padding: 0.6em 0.5em;
     }
-
+ 
     .btn {
       appearance: none;
       display: block;
@@ -128,7 +155,7 @@
       border: 2px solid var(--accent);
       border-radius: var(--radius-sm);
       color: #ffffff;
-      font-family: 'Source Sans Pro', Helvetica, sans-serif;
+      font-family: 'Source Sans 3', Helvetica, sans-serif;
       font-size: 0.9em;
       font-weight: 700;
       letter-spacing: 0.2em;
@@ -136,17 +163,17 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, transform 0.1s;
     }
-
+ 
     .btn:hover:not(:disabled) {
       background: var(--accent-hover);
       border-color: var(--accent-hover);
       box-shadow: var(--shadow-hover);
     }
-
+ 
     .btn:active:not(:disabled) { transform: scale(0.99); }
-
+ 
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
+ 
     .btn.loading { color: transparent; position: relative; }
     .btn.loading::after {
       content: '';
@@ -159,23 +186,23 @@
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
-
+ 
     @keyframes spin { to { transform: rotate(360deg); } }
-
+ 
     .btn-ghost {
       background: transparent;
       border-color: var(--border);
       color: var(--text-muted);
       margin-top: 0.75em;
     }
-
+ 
     .btn-ghost:hover:not(:disabled) {
       border-color: var(--text-main);
       color: var(--text-main);
       background: transparent;
       box-shadow: none;
     }
-
+ 
     .error {
       margin-top: 0.75em;
       font-size: 0.875em;
@@ -183,30 +210,33 @@
       min-height: 1.2em;
       text-align: left;
     }
-
+ 
     .hint {
       font-size: 0.8em;
       color: var(--text-muted);
       margin-top: 0.5em;
       text-align: left;
     }
-
+ 
     .step { animation: fadeUp 0.25s cubic-bezier(0.16,1,0.3,1); }
-
+ 
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: none; }
     }
-
+ 
     .success-icon {
-      width: 64px; height: 64px;
+      width: 64px;
+      height: 64px;
       background: var(--accent-light);
       border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto 1.5em;
       font-size: 1.8em;
     }
-
+ 
     @media (max-width: 480px) {
       .card { padding: 2em 1.5em; }
     }
