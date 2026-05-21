@@ -29,7 +29,7 @@ export default {
 
 async function getSession(req, env) {
   const cookie = req.headers.get('Cookie') || '';
-  const token  = cookie.match(new RegExp(`${COOKIE}=([^;]+)`))?.[1];
+  const token = cookie.match(/sf_session=([^;]+)/)?.[1];
   if (!token) return null;
   return env.SESSIONS.get(token); // returns stored email, or null if expired/missing
 }
@@ -52,7 +52,9 @@ async function handleSend(req, env) {
   }
 
   // Generate 6-digit code and store with TTL
-  const code = Math.floor(100000 + Math.random() * 900000).toString();
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  const code = (100000 + (array[0] % 900000)).toString();
   await env.OTPS.put(email, code, { expirationTtl: OTP_TTL });
 
   // Send via Resend
@@ -94,7 +96,7 @@ async function handleVerify(req, env) {
 
 async function handleLogout(req, env) {
   const cookie = req.headers.get('Cookie') || '';
-  const token  = cookie.match(new RegExp(`${COOKIE}=([^;]+)`))?.[1];
+  const token = cookie.match(/sf_session=([^;]+)/)?.[1];
   if (token) await env.SESSIONS.delete(token);
 
   return new Response(null, {
