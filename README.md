@@ -43,6 +43,10 @@ The easiest way to share this application with other players is to host it via G
 
 GitHub will provide a live URL where the application can be accessed, perfectly formatted for mobile devices.
 
+## Authentication
+
+The page is meant to operate indepently of any backend or external services. However, there may be reasons to gate access. An example `worker.js` is in the cloudflare directory that enables you to use `auth.html` in those scenarios. This is simply an example of how to add authentication, and not a robust solution.
+
 ## 🔄 Resetting Data
 
 If you need to clear your progress and start the program over, you can use the "Reset Today's Progress" button for a single day, or simply clear your browser's site data/local storage to wipe the application completely clean.
