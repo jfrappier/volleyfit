@@ -4,6 +4,15 @@ const OTP_TTL     = 600;                    // 10 min OTP expiry
 const SESSION_TTL = 60 * 60 * 24 * 30;     // 30-day sessions
 const MAX_VERIFY_ATTEMPTS = 5;              // max OTP guesses before lockout
 const MAX_SEND_ATTEMPTS   = 3;             // max OTP sends per IP per 10 min
+const STATIC_FILES = new Set([
+  '/logo.png',
+  '/favicon.png',
+  '/favicon.ico',
+  '/fonts/source-sans-3-v19-latin-300.woff2',
+  '/fonts/source-sans-3-v19-latin-regular.woff2',
+  '/fonts/source-sans-3-v19-latin-600.woff2',
+  '/fonts/source-sans-3-v19-latin-700.woff2',
+]);
 
 export default {
   async fetch(req, env) {
@@ -20,9 +29,8 @@ export default {
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
     // Sanitize pathname to strip any characters that aren't valid in a file path
-    if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) {
-      const safePath = url.pathname.replace(/[^a-zA-Z0-9/._-]/g, '');
-      const safeReq  = new Request(new URL(safePath, ORIGIN), req);
+    if (STATIC_FILES.has(url.pathname)) {
+      const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
     }
 
