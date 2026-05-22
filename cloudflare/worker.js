@@ -40,8 +40,7 @@ export default {
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    const safePath = url.pathname.replace(/[^a-zA-Z0-9/._-]/g, '');
-    const safeReq  = new Request(new URL(safePath, ORIGIN), req);
+    const safeReq = new Request(new URL('/index.html', ORIGIN), req);
     return addSecurityHeaders(await fetch(safeReq));
   }
 };
