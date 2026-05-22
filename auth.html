@@ -395,8 +395,13 @@
       // Worker sets the HttpOnly cookie; we just redirect
       showStep('step-success');
       const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      
+      // Only allow relative paths on the same origin
+      const safeDest = (redirect && /^\/[^/\\]/.test(redirect)) ? redirect : '/';
+      
       setTimeout(() => {
-        window.location.href = params.get('redirect') || '/';
+        window.location.href = safeDest;
       }, 800);
 
     } catch {
