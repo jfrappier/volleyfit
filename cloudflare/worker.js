@@ -19,8 +19,10 @@ export default {
     if (url.pathname === '/auth/logout')   return handleLogout(req, env);
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
+    // Sanitize pathname to strip any characters that aren't valid in a file path
     if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) {
-      const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
+      const safePath = url.pathname.replace(/[^a-zA-Z0-9/._-]/g, '');
+      const safeReq  = new Request(new URL(safePath, ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
     }
 
@@ -30,7 +32,8 @@ export default {
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
+    const safePath = url.pathname.replace(/[^a-zA-Z0-9/._-]/g, '');
+    const safeReq  = new Request(new URL(safePath, ORIGIN), req);
     return addSecurityHeaders(await fetch(safeReq));
   }
 };
