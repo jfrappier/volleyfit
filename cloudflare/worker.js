@@ -11,7 +11,7 @@ export default {
 
     // Auth endpoints — always pass through
     if (url.pathname === '/auth.html') {
-      const safeReq = new Request(new URL(url.pathname + url.search, ORIGIN), req);
+      const safeReq = new Request(new URL('/auth.html', ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
     }
     if (url.pathname === '/auth/send')     return handleSend(req, env);
@@ -20,7 +20,7 @@ export default {
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
     if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) {
-      const safeReq = new Request(new URL(url.pathname + url.search, ORIGIN), req);
+      const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
     }
 
@@ -30,7 +30,7 @@ export default {
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    const safeReq = new Request(new URL(url.pathname + url.search, ORIGIN), req);
+    const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
     return addSecurityHeaders(await fetch(safeReq));
   }
 };
