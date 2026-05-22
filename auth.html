@@ -35,7 +35,7 @@
       font-style: normal;
       font-display: swap;
     }
- 
+
     :root {
       --bg-body:      #f4f6f8;
       --bg-panel:     #ffffff;
@@ -50,9 +50,9 @@
       --shadow-md:    0 4px 12px rgba(0,0,0,0.05);
       --shadow-hover: 0 10px 25px rgba(232,10,137,0.15);
     }
- 
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
     body {
       background: var(--bg-body);
       color: var(--text-muted);
@@ -63,7 +63,7 @@
       justify-content: center;
       padding: 24px;
     }
- 
+
     .card {
       background: var(--bg-panel);
       border: 1px solid var(--border);
@@ -74,14 +74,14 @@
       max-width: 400px;
       text-align: center;
     }
- 
+
     .logo {
       width: 180px;
       height: auto;
       display: block;
       margin: 0 auto 2em;
     }
- 
+
     h1 {
       color: var(--text-main);
       font-size: 1.4em;
@@ -90,19 +90,19 @@
       text-transform: uppercase;
       margin-bottom: 0.4em;
     }
- 
+
     .subtitle {
       font-size: 0.95em;
       color: var(--text-muted);
       line-height: 1.6;
       margin-bottom: 2em;
     }
- 
+
     .subtitle strong {
       color: var(--accent);
       font-weight: 600;
     }
- 
+
     label {
       display: block;
       text-align: left;
@@ -113,7 +113,7 @@
       color: var(--text-muted);
       margin-bottom: 8px;
     }
- 
+
     input {
       width: 100%;
       background: var(--bg-body);
@@ -127,15 +127,15 @@
       transition: border-color 0.2s, box-shadow 0.2s;
       -webkit-appearance: none;
     }
- 
+
     input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
       background: var(--bg-panel);
     }
- 
+
     input::placeholder { color: #cbd5e0; }
- 
+
     input#otp-input {
       font-size: 2em;
       font-weight: 700;
@@ -144,7 +144,7 @@
       color: var(--text-main);
       padding: 0.6em 0.5em;
     }
- 
+
     .btn {
       appearance: none;
       display: block;
@@ -163,17 +163,17 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s, transform 0.1s;
     }
- 
+
     .btn:hover:not(:disabled) {
       background: var(--accent-hover);
       border-color: var(--accent-hover);
       box-shadow: var(--shadow-hover);
     }
- 
+
     .btn:active:not(:disabled) { transform: scale(0.99); }
- 
+
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
- 
+
     .btn.loading { color: transparent; position: relative; }
     .btn.loading::after {
       content: '';
@@ -186,23 +186,23 @@
       border-radius: 50%;
       animation: spin 0.6s linear infinite;
     }
- 
+
     @keyframes spin { to { transform: rotate(360deg); } }
- 
+
     .btn-ghost {
       background: transparent;
       border-color: var(--border);
       color: var(--text-muted);
       margin-top: 0.75em;
     }
- 
+
     .btn-ghost:hover:not(:disabled) {
       border-color: var(--text-main);
       color: var(--text-main);
       background: transparent;
       box-shadow: none;
     }
- 
+
     .error {
       margin-top: 0.75em;
       font-size: 0.875em;
@@ -210,21 +210,21 @@
       min-height: 1.2em;
       text-align: left;
     }
- 
+
     .hint {
       font-size: 0.8em;
       color: var(--text-muted);
       margin-top: 0.5em;
       text-align: left;
     }
- 
+
     .step { animation: fadeUp 0.25s cubic-bezier(0.16,1,0.3,1); }
- 
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: none; }
     }
- 
+
     .success-icon {
       width: 64px;
       height: 64px;
@@ -236,7 +236,7 @@
       margin: 0 auto 1.5em;
       font-size: 1.8em;
     }
- 
+
     @media (max-width: 480px) {
       .card { padding: 2em 1.5em; }
     }
@@ -305,10 +305,11 @@
 </div>
 
 <script>
-  const COOKIE = 'sf_session';
+  const COOKIE      = 'sf_session';
   const SESSION_DAYS = 30;
 
-  let emailValue = '';
+  let emailValue  = '';  // email captured in step 1, used in step 2
+  let otpAttempts = 0;   // client-side attempt counter (worker enforces the real limit)
 
   // Auto-submit when 6 digits entered
   document.getElementById('otp-input').addEventListener('input', e => {
@@ -353,7 +354,8 @@
         return;
       }
 
-      emailValue = email;
+      emailValue  = email;
+      otpAttempts = 0;  // reset counter for fresh code
       document.getElementById('otp-subtitle').textContent =
         `We sent a 6-digit code to ${email}.`;
       showStep('step-otp');
@@ -371,10 +373,24 @@
     const errEl = document.getElementById('otp-error');
     const btn   = document.getElementById('otp-btn');
 
+    // Guard: shouldn't be possible to reach this without an email, but just in case
+    if (!emailValue) {
+      errEl.textContent = 'Something went wrong — please start over.';
+      showStep('step-email');
+      return;
+    }
+
     if (code.length !== 6) {
       errEl.textContent = 'Enter the 6-digit code from your email.';
       return;
     }
+
+    // Client-side attempt limit — real enforcement happens in the worker
+    if (otpAttempts >= 5) {
+      errEl.textContent = 'Too many attempts. Please request a new code.';
+      return;
+    }
+    otpAttempts++;
 
     errEl.textContent = '';
     setLoading(btn, true);
@@ -386,6 +402,12 @@
         body: JSON.stringify({ email: emailValue, code })
       });
 
+      if (res.status === 429) {
+        errEl.textContent = 'Too many attempts. Please request a new code.';
+        document.getElementById('otp-input').value = '';
+        return;
+      }
+
       if (!res.ok) {
         errEl.textContent = 'Incorrect or expired code — try again.';
         document.getElementById('otp-input').value = '';
@@ -394,12 +416,11 @@
 
       // Worker sets the HttpOnly cookie; we just redirect
       showStep('step-success');
+
+      // Safe redirect: only allow relative paths on the same origin.
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect');
-      
-      // Only allow relative paths on the same origin
       const safeDest = (redirect && /^\/[^/\\]/.test(redirect)) ? redirect : '/';
-      
       setTimeout(() => {
         window.location.href = safeDest;
       }, 800);
@@ -414,6 +435,7 @@
   function goBack() {
     document.getElementById('otp-input').value = '';
     document.getElementById('otp-error').textContent = '';
+    otpAttempts = 0;  // reset so a fresh code gets a fresh counter
     showStep('step-email');
     document.getElementById('email-input').focus();
   }
