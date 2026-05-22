@@ -1,21 +1,38 @@
 const COOKIE      = 'sf_session';
+const ORIGIN      = 'https://spikefit.app';  // pinned origin for all fetch calls
 const OTP_TTL     = 600;                    // 10 min OTP expiry
 const SESSION_TTL = 60 * 60 * 24 * 30;     // 30-day sessions
 const MAX_VERIFY_ATTEMPTS = 5;              // max OTP guesses before lockout
 const MAX_SEND_ATTEMPTS   = 3;             // max OTP sends per IP per 10 min
+const STATIC_FILES = new Set([
+  '/logo.png',
+  '/favicon.png',
+  '/favicon.ico',
+  '/fonts/source-sans-3-v19-latin-300.woff2',
+  '/fonts/source-sans-3-v19-latin-regular.woff2',
+  '/fonts/source-sans-3-v19-latin-600.woff2',
+  '/fonts/source-sans-3-v19-latin-700.woff2',
+]);
 
 export default {
   async fetch(req, env) {
     const url = new URL(req.url);
 
     // Auth endpoints — always pass through
-    if (url.pathname === '/auth.html')     return fetch(req);
+    if (url.pathname === '/auth.html') {
+      const safeReq = new Request(new URL('/auth.html', ORIGIN), req);
+      return addSecurityHeaders(await fetch(safeReq));
+    }
     if (url.pathname === '/auth/send')     return handleSend(req, env);
     if (url.pathname === '/auth/verify')   return handleVerify(req, env);
     if (url.pathname === '/auth/logout')   return handleLogout(req, env);
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
-    if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) return fetch(req);
+    // Sanitize pathname to strip any characters that aren't valid in a file path
+    if (STATIC_FILES.has(url.pathname)) {
+      const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
+      return addSecurityHeaders(await fetch(safeReq));
+    }
 
     // Gate everything else on a valid session cookie
     const session = await getSession(req, env);
@@ -23,7 +40,8 @@ export default {
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    return fetch(req);
+    const safeReq = new Request(new URL('/index.html', ORIGIN), req);
+    return addSecurityHeaders(await fetch(safeReq));
   }
 };
 
@@ -177,6 +195,17 @@ function respond(body, status = 200, extraHeaders = {}) {
     status,
     headers: { 'Content-Type': 'application/json', ...extraHeaders }
   });
+}
+
+// Applies security headers to all page responses
+function addSecurityHeaders(response) {
+  const headers = new Headers(response.headers);
+  headers.set('Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: raw.githubusercontent.com; font-src 'self'; connect-src 'self'");
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return new Response(response.body, { status: response.status, headers });
 }
 
 // Prevents timing attacks when comparing OTP codes
