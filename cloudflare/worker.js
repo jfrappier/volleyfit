@@ -1,6 +1,8 @@
-const COOKIE = 'sf_session';
-const OTP_TTL = 600;                  // 10 min OTP expiry
-const SESSION_TTL = 60 * 60 * 24 * 30; // 30-day sessions
+const COOKIE      = 'sf_session';
+const OTP_TTL     = 600;                    // 10 min OTP expiry
+const SESSION_TTL = 60 * 60 * 24 * 30;     // 30-day sessions
+const MAX_VERIFY_ATTEMPTS = 5;              // max OTP guesses before lockout
+const MAX_SEND_ATTEMPTS   = 3;             // max OTP sends per IP per 10 min
 
 export default {
   async fetch(req, env) {
@@ -12,7 +14,7 @@ export default {
     if (url.pathname === '/auth/verify')   return handleVerify(req, env);
     if (url.pathname === '/auth/logout')   return handleLogout(req, env);
 
-    // Static assets — always pass through (logo, favicon, etc.)
+    // Static assets — always pass through (logo, favicon, fonts, etc.)
     if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) return fetch(req);
 
     // Gate everything else on a valid session cookie
@@ -29,7 +31,7 @@ export default {
 
 async function getSession(req, env) {
   const cookie = req.headers.get('Cookie') || '';
-  const token = cookie.match(/sf_session=([^;]+)/)?.[1];
+  const token  = cookie.match(/sf_session=([^;]+)/)?.[1];
   if (!token) return null;
   return env.SESSIONS.get(token); // returns stored email, or null if expired/missing
 }
@@ -45,9 +47,21 @@ async function handleSend(req, env) {
   email = (email || '').trim().toLowerCase();
   if (!email) return respond({ error: 'bad_request' }, 400);
 
+  // Rate limit: max 3 OTP sends per IP per 10 minutes
+  // Prevents inbox bombing and enumeration of the allowlist
+  const ip      = req.headers.get('CF-Connecting-IP') || 'unknown';
+  const sendKey = `send:${ip}`;
+  const sends   = Number.parseInt(await env.RATELIMIT.get(sendKey) || '0');
+  if (sends >= MAX_SEND_ATTEMPTS) {
+    return respond({ error: 'rate_limited' }, 429);
+  }
+  await env.RATELIMIT.put(sendKey, String(sends + 1), { expirationTtl: OTP_TTL });
+
   // Check allowlist
   const isAllowed = await env.ALLOWLIST.get(email);
   if (!isAllowed) {
+    // Return 403 after the rate limit check so the rate limit still applies
+    // to people probing the allowlist
     return respond({ error: 'not_allowed' }, 403);
   }
 
@@ -75,13 +89,28 @@ async function handleVerify(req, env) {
   email = (email || '').trim().toLowerCase();
   code  = (code  || '').trim();
 
+  // Rate limit: max 5 attempts per IP+email combination within the OTP window
+  // Keyed on both so a single IP can't brute-force multiple accounts simultaneously
+  const ip         = req.headers.get('CF-Connecting-IP') || 'unknown';
+  const verifyKey  = `verify:${ip}:${email}`;
+  const attempts   = Number.parseInt(await env.RATELIMIT.get(verifyKey) || '0');
+  if (attempts >= MAX_VERIFY_ATTEMPTS) {
+    return respond({ error: 'rate_limited' }, 429);
+  }
+
+  // Increment BEFORE checking the code — prevents an attacker from staying
+  // just under the limit by stopping as soon as they get a hit
+  await env.RATELIMIT.put(verifyKey, String(attempts + 1), { expirationTtl: OTP_TTL });
+
   const stored = await env.OTPS.get(email);
 
   // Constant-time comparison to prevent timing attacks
   const valid = stored && timingSafeEqual(stored, code);
   if (!valid) return respond({ error: 'invalid_code' }, 401);
 
-  await env.OTPS.delete(email); // OTP is single-use
+  // Clean up on success — OTP is single-use, rate limit key no longer needed
+  await env.OTPS.delete(email);
+  await env.RATELIMIT.delete(verifyKey);
 
   // Create session
   const token = crypto.randomUUID();
@@ -96,13 +125,13 @@ async function handleVerify(req, env) {
 
 async function handleLogout(req, env) {
   const cookie = req.headers.get('Cookie') || '';
-  const token = cookie.match(/sf_session=([^;]+)/)?.[1];
+  const token  = cookie.match(/sf_session=([^;]+)/)?.[1];
   if (token) await env.SESSIONS.delete(token);
 
   return new Response(null, {
     status: 302,
     headers: {
-      Location: '/auth.html',
+      Location:     '/auth.html',
       'Set-Cookie': `${COOKIE}=; Max-Age=0; Path=/; HttpOnly; Secure; SameSite=Strict`
     }
   });
