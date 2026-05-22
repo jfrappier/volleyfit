@@ -51,7 +51,7 @@ async function handleSend(req, env) {
   // Prevents inbox bombing and enumeration of the allowlist
   const ip      = req.headers.get('CF-Connecting-IP') || 'unknown';
   const sendKey = `send:${ip}`;
-  const sends   = parseInt(await env.RATELIMIT.get(sendKey) || '0');
+  const sends   = Number.parseInt(await env.RATELIMIT.get(sendKey) || '0');
   if (sends >= MAX_SEND_ATTEMPTS) {
     return respond({ error: 'rate_limited' }, 429);
   }
@@ -93,7 +93,7 @@ async function handleVerify(req, env) {
   // Keyed on both so a single IP can't brute-force multiple accounts simultaneously
   const ip         = req.headers.get('CF-Connecting-IP') || 'unknown';
   const verifyKey  = `verify:${ip}:${email}`;
-  const attempts   = parseInt(await env.RATELIMIT.get(verifyKey) || '0');
+  const attempts   = Number.parseInt(await env.RATELIMIT.get(verifyKey) || '0');
   if (attempts >= MAX_VERIFY_ATTEMPTS) {
     return respond({ error: 'rate_limited' }, 429);
   }
