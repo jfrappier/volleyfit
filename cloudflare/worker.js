@@ -1,4 +1,5 @@
 const COOKIE      = 'sf_session';
+const ORIGIN      = 'https://spikefit.app';  // pinned origin for all fetch calls
 const OTP_TTL     = 600;                    // 10 min OTP expiry
 const SESSION_TTL = 60 * 60 * 24 * 30;     // 30-day sessions
 const MAX_VERIFY_ATTEMPTS = 5;              // max OTP guesses before lockout
@@ -9,13 +10,19 @@ export default {
     const url = new URL(req.url);
 
     // Auth endpoints — always pass through
-    if (url.pathname === '/auth.html')     return addSecurityHeaders(await fetch(req));
+    if (url.pathname === '/auth.html') {
+      const safeReq = new Request(new URL(url.pathname + url.search, ORIGIN), req);
+      return addSecurityHeaders(await fetch(safeReq));
+    }
     if (url.pathname === '/auth/send')     return handleSend(req, env);
     if (url.pathname === '/auth/verify')   return handleVerify(req, env);
     if (url.pathname === '/auth/logout')   return handleLogout(req, env);
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
-    if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) return addSecurityHeaders(await fetch(req));
+    if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) {
+      const safeReq = new Request(new URL(url.pathname + url.search, ORIGIN), req);
+      return addSecurityHeaders(await fetch(safeReq));
+    }
 
     // Gate everything else on a valid session cookie
     const session = await getSession(req, env);
@@ -23,7 +30,8 @@ export default {
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    return addSecurityHeaders(await fetch(req));
+    const safeReq = new Request(new URL(url.pathname + url.search, ORIGIN), req);
+    return addSecurityHeaders(await fetch(safeReq));
   }
 };
 
