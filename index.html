@@ -159,10 +159,6 @@
             text-transform: uppercase;
             margin-bottom: 3em;
         }
-        
-        #mobile-menu-toggle {
-            display: none; /* Hidden on desktop */
-        }
 
         /* Navigation */
         .nav {
@@ -188,6 +184,16 @@
             text-transform: uppercase;
             transition: all 0.2s ease-in-out;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1em;
+        }
+
+        .nav button svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
         }
 
         .nav button:hover {
@@ -601,75 +607,69 @@
 
         /* Responsive Design */
         @media screen and (max-width: 980px) {
-            #wrapper { flex-direction: column; }
-            #header { width: 100%; height: auto; position: relative; padding: 2em 1.5em; border-right: none; border-bottom: solid 1px var(--border); text-align: center; }
+            #wrapper { 
+                flex-direction: column; 
+                padding-bottom: 85px; /* Added spacing so content doesn't hide behind the bottom nav */
+            }
+            #header { 
+                width: 100%; 
+                height: auto; 
+                position: relative; 
+                padding: 2em 1.5em; 
+                border-right: none; 
+                border-bottom: solid 1px var(--border); 
+                text-align: center; 
+            }
             .header-logo { margin: 0 auto; }
-            #header p { margin-bottom: 1.5em; }
+            #header p { margin-bottom: 0; }
             
-            /* Mobile Menu Button */
-            #mobile-menu-toggle {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--bg-panel);
-                color: var(--text-main);
-                border: 2px solid var(--border);
-                padding: 0.75em 1.5em;
-                border-radius: var(--radius-sm);
-                font-family: 'Source Sans Pro', sans-serif;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.1em;
-                cursor: pointer;
-                transition: all 0.2s ease;
+            /* Native App Bottom Nav styling */
+            .nav { 
+                flex-direction: row; 
+                position: fixed;
+                bottom: 0;
+                left: 0;
                 width: 100%;
-                max-width: 300px;
-                margin: 0 auto;
-            }
-            #mobile-menu-toggle:hover {
-                border-color: var(--accent);
-                color: var(--accent);
-            }
-            #mobile-menu-toggle::before {
-                content: '☰';
-                margin-right: 0.5em;
-                font-size: 1.2em;
+                background: var(--bg-panel);
+                border-top: 1px solid var(--border);
+                box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+                z-index: 1000;
+                gap: 0;
+                padding-bottom: env(safe-area-inset-bottom);
+                justify-content: space-around;
             }
 
-            .nav { 
-                display: none; /* Hide by default on mobile */
-                flex-direction: column; 
-                width: 100%;
-                max-width: 300px;
-                margin: 0.5em auto 0 auto;
-                background: var(--bg-panel);
-                border: 1px solid var(--border);
-                border-radius: var(--radius-md);
-                box-shadow: var(--shadow-md);
-                overflow: hidden;
-                gap: 0;
-            }
-            .nav.open {
-                display: flex;
-                animation: fadeIn 0.2s ease-in-out;
-            }
             .nav button { 
-                width: 100%; 
-                padding: 1.25em 1.5em;
+                width: 25%; 
+                padding: 0.8em 0.2em calc(0.8em + env(safe-area-inset-bottom));
                 border-radius: 0;
-                border-bottom: 1px solid var(--border);
-                border-width: 0 0 1px 0; 
+                border: none;
+                border-top: 3px solid transparent;
+                font-size: 0.65em;
+                height: auto;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4em;
             }
-            .nav button:last-child {
-                border-bottom: none;
+
+            .nav button svg {
+                width: 22px;
+                height: 22px;
+                stroke-width: 2px;
+            }
+
+            .nav button.active {
+                background: transparent;
+                border-top-color: var(--accent);
+                color: var(--accent);
+                box-shadow: none;
             }
             
             #main { width: 100%; padding: 3em 1.5em; }
         }
         
         @media screen and (max-width: 480px) {
-            .nav { flex-direction: column; }
-            .nav button { width: 100%; }
             #main { padding: 2em 1em; }
             .exercise-card { flex-direction: column; position: relative; padding: 1.5em; }
             .checkbox-container { position: absolute; top: 1.5em; right: 1.25em; margin: 0; }
@@ -705,12 +705,24 @@
         <header id="header">
             <h1><img src="logo.png" alt="SpikeFit" class="header-logo" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png'"></h1>
             <p id="current-workout-title">30-Min Power Program</p>
-            <button id="mobile-menu-toggle" onclick="toggleMenu()">Menu</button>
+            
             <div class="nav" id="main-nav">
-                <button class="active" onclick="switchTab('daily')">Today's Workout</button>
-                <button onclick="switchTab('schedule')">Schedule</button>
-                <button onclick="switchTab('history')">Calendar</button>
-                <button onclick="openPrivacyModal()">Data Privacy</button>
+                <button class="active" onclick="switchTab('daily')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Today</span>
+                </button>
+                <button onclick="switchTab('schedule')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                    <span>Schedule</span>
+                </button>
+                <button onclick="switchTab('history')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <span>Calendar</span>
+                </button>
+                <button onclick="openPrivacyModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>Privacy</span>
+                </button>
             </div>
         </header>
 
@@ -1142,10 +1154,6 @@
             localStorage.setItem('completedDates', JSON.stringify(completedDates));
         }
 
-        function toggleMenu() {
-            document.getElementById('main-nav').classList.toggle('open');
-        }
-
         // Logic Functions
         function switchTab(tabId) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
@@ -1153,11 +1161,6 @@
             document.getElementById(tabId).classList.add('active');
             event.currentTarget.classList.add('active');
             
-            const nav = document.getElementById('main-nav');
-            if (nav && nav.classList.contains('open')) {
-                nav.classList.remove('open');
-            }
-
             if(window.innerWidth <= 980) {
                 window.scrollTo({ top: document.getElementById('main').offsetTop - 20, behavior: 'smooth' });
             }
@@ -1540,10 +1543,6 @@
 
         function openPrivacyModal() { 
             document.getElementById('privacy-modal').style.display = 'flex'; 
-            const nav = document.getElementById('main-nav');
-            if (nav && nav.classList.contains('open')) {
-                nav.classList.remove('open');
-            }
         }
         function closePrivacyModal() { document.getElementById('privacy-modal').style.display = 'none'; }
 
