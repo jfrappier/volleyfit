@@ -1,14 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SpikeFit: 30-Min Workouts</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="apple-touch-icon" href="favicon.png">
-    <style>
-        /* HTML5 UP "Paradigm Shift" Inspired Styling - Modernized */
-        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <Title>SpikeFit: 30-Min Workouts</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <style>
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-300.woff2') format('woff2');
+      font-weight: 300;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-600.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Source Sans 3';
+      src: url('/fonts/source-sans-3-v19-latin-700.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
 
         :root {
             --bg-body: #f4f6f8; /* Slightly cooler, modern grey */
@@ -32,7 +58,7 @@
         body { 
             background-color: var(--bg-body); 
             color: var(--text-muted); 
-            font-family: 'Source Sans Pro', Helvetica, sans-serif;
+            font-family: 'Source Sans 3', Helvetica, sans-serif;
             font-weight: 400;
             line-height: 1.75; 
         }
@@ -174,7 +200,7 @@
             border-radius: var(--radius-sm);
             color: var(--text-muted);
             cursor: pointer;
-            font-family: 'Source Sans Pro', sans-serif;
+            font-family: 'Source Sans 3', sans-serif;
             font-size: 0.85em;
             font-weight: 700;
             letter-spacing: 0.2em;
@@ -402,7 +428,7 @@
             border: none; 
             background: transparent; 
             border-radius: var(--radius-md);
-            font-family: 'Source Sans Pro', sans-serif; 
+            font-family: 'Source Sans 3', sans-serif; 
             font-weight: 700; 
             text-transform: uppercase; 
             letter-spacing: 0.05em; 
@@ -421,7 +447,7 @@
 
         /* Calendar Elements */
         .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; }
-        .month-header button { background: var(--bg-panel); border: solid 1px var(--border); padding: 0.75em 1.5em; cursor: pointer; border-radius: var(--radius-sm); font-family: 'Source Sans Pro', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8em; color: var(--text-main); transition: all 0.2s ease; box-shadow: var(--shadow-sm);}
+        .month-header button { background: var(--bg-panel); border: solid 1px var(--border); padding: 0.75em 1.5em; cursor: pointer; border-radius: var(--radius-sm); font-family: 'Source Sans 3', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8em; color: var(--text-main); transition: all 0.2s ease; box-shadow: var(--shadow-sm);}
         .month-header button:hover { border-color: var(--accent); color: var(--accent); }
         .month-header button:disabled { opacity: 0.4; cursor: not-allowed; border-color: var(--border); color: var(--text-muted); box-shadow: none;}
         
@@ -441,7 +467,7 @@
             border-radius: var(--radius-sm);
             color: var(--text-main);
             cursor: pointer;
-            font-family: 'Source Sans Pro', sans-serif;
+            font-family: 'Source Sans 3', sans-serif;
             font-size: 0.9em;
             font-weight: 700;
             letter-spacing: 0.2em;
@@ -688,7 +714,7 @@
                 display: none;
             }
         }
-    </style>
+  </style>
 </head>
 <body>
 
@@ -785,7 +811,7 @@
             <svg class="badge-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="50" cy="50" r="45" fill="#e80a89" />
                 <path d="M30 45 L45 60 L75 30" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                <text x="50" y="82" font-family="'Source Sans Pro', sans-serif" font-size="12" fill="white" font-weight="700" letter-spacing="1" text-anchor="middle">SPIKEFIT</text>
+                <text x="50" y="82" font-family="'Source Sans 3', sans-serif" font-size="12" fill="white" font-weight="700" letter-spacing="1" text-anchor="middle">SPIKEFIT</text>
             </svg>
             <h2>Workout Complete!</h2>
             <p style="margin-bottom: 1.5em; color: var(--text-muted);">Great job crushing today's session.</p>
