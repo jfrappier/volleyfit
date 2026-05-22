@@ -9,13 +9,13 @@ export default {
     const url = new URL(req.url);
 
     // Auth endpoints — always pass through
-    if (url.pathname === '/auth.html')     return fetch(req);
+    if (url.pathname === '/auth.html')     return addSecurityHeaders(await fetch(req));
     if (url.pathname === '/auth/send')     return handleSend(req, env);
     if (url.pathname === '/auth/verify')   return handleVerify(req, env);
     if (url.pathname === '/auth/logout')   return handleLogout(req, env);
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
-    if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) return fetch(req);
+    if (/\.(png|ico|jpg|webp|svg|css|js|woff2?)$/.test(url.pathname)) return addSecurityHeaders(await fetch(req));
 
     // Gate everything else on a valid session cookie
     const session = await getSession(req, env);
@@ -23,7 +23,7 @@ export default {
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    return fetch(req);
+    return addSecurityHeaders(await fetch(req));
   }
 };
 
@@ -177,6 +177,17 @@ function respond(body, status = 200, extraHeaders = {}) {
     status,
     headers: { 'Content-Type': 'application/json', ...extraHeaders }
   });
+}
+
+// Applies security headers to all page responses
+function addSecurityHeaders(response) {
+  const headers = new Headers(response.headers);
+  headers.set('Content-Security-Policy',
+    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: raw.githubusercontent.com; font-src 'self'; connect-src 'self'");
+  headers.set('X-Content-Type-Options', 'nosniff');
+  headers.set('X-Frame-Options', 'DENY');
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  return new Response(response.body, { status: response.status, headers });
 }
 
 // Prevents timing attacks when comparing OTP codes
