@@ -826,13 +826,13 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="snack-toast" class="toast-container">
-        <div class="toast-icon">🥤</div>
+    <div id="app-toast" class="toast-container">
+        <div class="toast-icon" id="toast-icon">🥤</div>
         <div class="toast-content">
-            <div class="toast-title">Time to Refuel!</div>
-            <div class="toast-text">Don't forget to grab a protein shake or a healthy snack for recovery.</div>
+            <div class="toast-title" id="toast-title">Time to Refuel!</div>
+            <div class="toast-text" id="toast-text">Don't forget to grab a protein shake or a healthy snack for recovery.</div>
         </div>
-        <button class="toast-close" onclick="closeSnackToast()">&times;</button>
+        <button class="toast-close" onclick="closeToast()">&times;</button>
     </div>
 
     <script>
@@ -1373,19 +1373,26 @@
             
             // Show snack reminder toast after closing the badge
             setTimeout(() => {
-                const toast = document.getElementById('snack-toast');
-                if (toast) {
-                    toast.classList.add('show');
-                    // Auto-hide after 8 seconds
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                    }, 8000);
-                }
+                showToast("Time to Refuel!", "Don't forget to grab a protein shake or a healthy snack for recovery.", "🥤");
             }, 400); // Slight delay for smooth transition
         }
 
-        function closeSnackToast() {
-            document.getElementById('snack-toast').classList.remove('show');
+        function showToast(title, text, icon = "🥤", duration = 8000) {
+            document.getElementById('toast-icon').innerText = icon;
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-text').innerText = text;
+            
+            const toast = document.getElementById('app-toast');
+            toast.classList.add('show');
+            
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                closeToast();
+            }, duration);
+        }
+
+        function closeToast() {
+            document.getElementById('app-toast').classList.remove('show');
         }
 
         function shareBadge() {
@@ -1526,9 +1533,56 @@
             renderSchedule();
         }
 
+        function checkStreak() {
+            // Only show the welcome/streak toast once per session
+            if (sessionStorage.getItem('welcomeToastShown')) return;
+            sessionStorage.setItem('welcomeToastShown', 'true');
+
+            const today = new Date();
+            const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+            
+            const dates = Object.keys(completedDates).sort((a,b) => new Date(b) - new Date(a)); // descending
+            if (dates.length === 0) return; 
+
+            let streak = 0;
+            let currentCheckDate = new Date(today);
+            currentCheckDate.setHours(0,0,0,0);
+            
+            const latestDateStr = dates[0];
+            const latestWorkout = new Date(latestDateStr + 'T00:00:00');
+            const daysSinceLast = Math.floor((currentCheckDate - latestWorkout) / (1000 * 60 * 60 * 24));
+
+            if (daysSinceLast >= 2) {
+                 showToast("👋 Welcome Back!", "Missed you the last few days, let's get a streak going!", "🔥", 10000);
+                 return;
+            }
+
+            // Count streak going backwards from today
+            for(let i=0; i<365; i++) {
+                const checkStr = currentCheckDate.getFullYear() + '-' + String(currentCheckDate.getMonth() + 1).padStart(2, '0') + '-' + String(currentCheckDate.getDate()).padStart(2, '0');
+                if (completedDates[checkStr]) {
+                    streak++;
+                    currentCheckDate.setDate(currentCheckDate.getDate() - 1);
+                } else if (i === 0 && !completedDates[todayStr]) {
+                    // It's fine if they haven't worked out YET today, just check yesterday
+                    currentCheckDate.setDate(currentCheckDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+
+            if (streak >= 2) {
+                showToast("🔥 Hot Streak!", `Daaamn, ${streak} days in a row, keep it up!`, "💪", 10000);
+            } else if (streak === 1 && daysSinceLast === 1) {
+                showToast("💪 Keep the Momentum!", "You logged a workout yesterday. Keep it going today!", "✨", 10000);
+            }
+        }
+
         function checkDisclaimer() { 
             if (!localStorage.getItem('disclaimerAgreed')) {
                 openDisclaimerModal(); 
+            } else {
+                setTimeout(checkStreak, 500);
             }
         }
         
@@ -1539,6 +1593,7 @@
         function acceptDisclaimer() { 
             localStorage.setItem('disclaimerAgreed', 'true'); 
             document.getElementById('disclaimer-modal').style.display = 'none'; 
+            setTimeout(checkStreak, 500);
         }
 
         function openPrivacyModal() { 
