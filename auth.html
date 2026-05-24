@@ -223,7 +223,6 @@
       src="logo.png"
       alt="SpikeFit"
       class="logo"
-      onerror="this.src='https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png'"
     >
     <h1>Sign In</h1>
     <p class="subtitle">Enter your email and we'll send you a one-time code.</p>
@@ -247,7 +246,6 @@
       src="logo.png"
       alt="SpikeFit"
       class="logo"
-      onerror="this.src='https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png'"
     >
     <h1>Check Your Email</h1>
     <p class="subtitle" id="otp-subtitle">We sent a 6-digit code to your email.</p>
@@ -298,11 +296,13 @@
   });
 
   async function sendOtp() {
-    const email = document.getElementById('email-input').value.trim();
-    const errEl = document.getElementById('email-error');
-    const btn   = document.getElementById('email-btn');
+    const emailInput = document.getElementById('email-input');
+    const email      = emailInput.value.trim();
+    const errEl      = document.getElementById('email-error');
+    const btn        = document.getElementById('email-btn');
 
-    if (!email || !email.includes('@')) {
+    // Use the browser's built-in RFC 5322 validator via the email input's validity state
+    if (!emailInput.validity.valid) {
       errEl.textContent = 'Please enter a valid email address.';
       return;
     }
@@ -318,7 +318,12 @@
       });
 
       if (res.status === 403) {
-        errEl.textContent = "You don't have access. Ask for an invite.";
+        emailValue  = email;
+        otpAttempts = 0;
+        document.getElementById('otp-subtitle').textContent =
+          `We sent a 6-digit code to ${email}.`;
+        showStep('step-otp');
+        document.getElementById('otp-input').focus();
         return;
       }
       if (!res.ok) {
