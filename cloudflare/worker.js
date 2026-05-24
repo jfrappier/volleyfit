@@ -1,13 +1,14 @@
 const COOKIE      = 'sf_session';
 const ORIGIN      = 'https://spikefit.app';  // pinned origin for all fetch calls
-const OTP_TTL     = 600;                    // 10 min OTP expiry
-const SESSION_TTL = 60 * 60 * 24 * 30;     // 30-day sessions
-const MAX_VERIFY_ATTEMPTS = 5;              // max OTP guesses before lockout
-const MAX_SEND_ATTEMPTS   = 3;             // max OTP sends per IP per 10 min
+const OTP_TTL     = 600;                     // 10 min OTP expiry
+const SESSION_TTL = 60 * 60 * 24 * 30;      // 30-day sessions
+const MAX_VERIFY_ATTEMPTS = 5;               // max OTP guesses before lockout
+const MAX_SEND_ATTEMPTS   = 3;              // max OTP sends per IP per 10 min
 const STATIC_FILES = new Set([
   '/logo.png',
   '/favicon.png',
   '/favicon.ico',
+  '/fonts/fonts.css',
   '/fonts/source-sans-3-v19-latin-300.woff2',
   '/fonts/source-sans-3-v19-latin-regular.woff2',
   '/fonts/source-sans-3-v19-latin-600.woff2',
@@ -23,12 +24,11 @@ export default {
       const safeReq = new Request(new URL('/auth.html', ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
     }
-    if (url.pathname === '/auth/send')     return handleSend(req, env);
-    if (url.pathname === '/auth/verify')   return handleVerify(req, env);
-    if (url.pathname === '/auth/logout')   return handleLogout(req, env);
+    if (url.pathname === '/auth/send')   return handleSend(req, env);
+    if (url.pathname === '/auth/verify') return handleVerify(req, env);
+    if (url.pathname === '/auth/logout') return handleLogout(req, env);
 
     // Static assets — always pass through (logo, favicon, fonts, etc.)
-    // Sanitize pathname to strip any characters that aren't valid in a file path
     if (STATIC_FILES.has(url.pathname)) {
       const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
@@ -109,9 +109,9 @@ async function handleVerify(req, env) {
 
   // Rate limit: max 5 attempts per IP+email combination within the OTP window
   // Keyed on both so a single IP can't brute-force multiple accounts simultaneously
-  const ip         = req.headers.get('CF-Connecting-IP') || 'unknown';
-  const verifyKey  = `verify:${ip}:${email}`;
-  const attempts   = Number.parseInt(await env.RATELIMIT.get(verifyKey) || '0');
+  const ip        = req.headers.get('CF-Connecting-IP') || 'unknown';
+  const verifyKey = `verify:${ip}:${email}`;
+  const attempts  = Number.parseInt(await env.RATELIMIT.get(verifyKey) || '0');
   if (attempts >= MAX_VERIFY_ATTEMPTS) {
     return respond({ error: 'rate_limited' }, 429);
   }
@@ -168,7 +168,9 @@ async function sendEmail(apiKey, to, code) {
       body: JSON.stringify({
         from:    'SpikeFit <noreply@spikefit.app>',
         to,
-        subject: `Your SpikeFit code: ${code}`,
+        // Code intentionally omitted from subject — subjects appear in push
+        // notifications and mail provider logs; keep the code in the body only
+        subject: 'Your SpikeFit sign-in code',
         html:    `
           <div style="font-family:'Source Sans Pro',Helvetica,sans-serif;max-width:400px;margin:0 auto;padding:40px 24px;">
             <img src="https://spikefit.app/logo.png" alt="SpikeFit" style="width:160px;display:block;margin:0 auto 32px;">
@@ -193,15 +195,25 @@ async function sendEmail(apiKey, to, code) {
 function respond(body, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...extraHeaders }
+    headers: {
+      'Content-Type':           'application/json',
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy':        'strict-origin-when-cross-origin',
+      ...extraHeaders
+    }
   });
 }
 
-// Applies security headers to all page responses
+// Applies security headers to all page responses.
+//
+// NOTE: script-src omits 'unsafe-inline'. This requires all JS to live in
+// external .js files (no inline <script> blocks). If you move back to inline
+// scripts, you'll need per-request nonces injected into both the CSP header
+// and each <script> tag — or re-add 'unsafe-inline' and accept the weaker CSP.
 function addSecurityHeaders(response) {
   const headers = new Headers(response.headers);
   headers.set('Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: raw.githubusercontent.com; font-src 'self'; connect-src 'self'");
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'");
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'DENY');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
