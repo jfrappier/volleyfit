@@ -168,7 +168,7 @@ async function sendEmail(apiKey, to, code) {
       body: JSON.stringify({
         from:    'SpikeFit <noreply@spikefit.app>',
         to,
-        subject: `Your SpikeFit code: ${code}`,
+        subject: `Your SpikeFit code`,
         html:    `
           <div style="font-family:'Source Sans Pro',Helvetica,sans-serif;max-width:400px;margin:0 auto;padding:40px 24px;">
             <img src="https://spikefit.app/logo.png" alt="SpikeFit" style="width:160px;display:block;margin:0 auto 32px;">
