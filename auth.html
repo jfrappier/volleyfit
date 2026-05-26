@@ -397,7 +397,7 @@
       // Safe redirect: only allow relative paths on the same origin.
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect');
-      const safeDest = (redirect && /^\/[^/\\]/.test(redirect)) ? redirect : '/';
+      const safeDest = (redirect && /^\/[^/\\]/.test(redirect)) ? redirect : '/app.html';
       setTimeout(() => {
         window.location.href = safeDest;
       }, 800);
