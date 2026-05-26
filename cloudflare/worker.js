@@ -27,20 +27,27 @@ export default {
     if (url.pathname === '/auth/verify')   return handleVerify(req, env);
     if (url.pathname === '/auth/logout')   return handleLogout(req, env);
 
-    // Static assets — always pass through (logo, favicon, fonts, etc.)
-    // Sanitize pathname to strip any characters that aren't valid in a file path
+    // Static assets — always pass through
     if (STATIC_FILES.has(url.pathname)) {
       const safeReq = new Request(new URL(url.pathname, ORIGIN), req);
       return addSecurityHeaders(await fetch(safeReq));
     }
 
-    // Gate everything else on a valid session cookie
+    // NEW: Allow public access to the landing page
+    if (url.pathname === '/' || url.pathname === '/index.html') {
+      const safeReq = new Request(new URL('/index.html', ORIGIN), req);
+      return addSecurityHeaders(await fetch(safeReq));
+    }
+
+    // Gate everything else (like /app.html) on a valid session cookie
     const session = await getSession(req, env);
     if (!session) {
+      // Send unauthenticated users to the login page, remembering where they tried to go
       return Response.redirect(`${url.origin}/auth.html?redirect=${encodeURIComponent(url.pathname)}`, 302);
     }
 
-    const safeReq = new Request(new URL('/index.html', ORIGIN), req);
+    // If they are authenticated, serve them the app
+    const safeReq = new Request(new URL('/app.html', ORIGIN), req);
     return addSecurityHeaders(await fetch(safeReq));
   }
 };
