@@ -12,6 +12,8 @@ const STATIC_FILES = new Set([
   '/fonts/source-sans-3-v19-latin-regular.woff2',
   '/fonts/source-sans-3-v19-latin-600.woff2',
   '/fonts/source-sans-3-v19-latin-700.woff2',
+  '/auth.js',
+  '/app.js'
 ]);
 
 export default {
@@ -193,7 +195,12 @@ async function sendEmail(apiKey, to, code) {
 function respond(body, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...extraHeaders }
+    headers: { 
+      'Content-Type': 'application/json',
+      'X-Content-Type-Options': 'nosniff',
+      'Referrer-Policy': 'strict-origin-when-cross-origin', 
+      ...extraHeaders 
+    }
   });
 }
 
@@ -201,7 +208,7 @@ function respond(body, status = 200, extraHeaders = {}) {
 function addSecurityHeaders(response) {
   const headers = new Headers(response.headers);
   headers.set('Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: raw.githubusercontent.com; font-src 'self'; connect-src 'self'");
+    "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: raw.githubusercontent.com; font-src 'self'; connect-src 'self'");
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('X-Frame-Options', 'DENY');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
