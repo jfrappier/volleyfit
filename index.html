@@ -875,10 +875,10 @@
             const completedCount = Object.keys(completedDates).length;
             if (completedCount >= 16 && workoutLevel === 'intermediate' && !manualLevelOverride) {
                 setLevel('advanced', true);
-                alert("🔥 MAXIMUM OVERDRIVE! You've successfully logged four weeks of workouts. We've automatically upgraded your schedule to the Advanced plan!");
+                showToast("🔥 MAXIMUM OVERDRIVE!", "You've successfully logged four weeks of workouts. We've automatically upgraded your schedule to the Advanced plan!", "🚀", 10000);
             } else if (completedCount >= 8 && workoutLevel === 'beginner' && !manualLevelOverride) {
                 setLevel('intermediate', true);
-                alert("🎉 LEVEL UP! You've successfully logged two weeks of workouts. We've automatically upgraded your schedule to the Intermediate plan! Keep crushing it!");
+                showToast("🎉 LEVEL UP!", "You've successfully logged two weeks of workouts. We've automatically upgraded your schedule to the Intermediate plan! Keep crushing it!", "⭐", 10000);
             }
             
             const btn = document.querySelector('.btn-complete');
@@ -1043,7 +1043,7 @@
                                     new ClipboardItem({ 'image/jpeg': window.currentShareBlob })
                                 ]);
                                 shareBtn.innerText = "Image Copied!";
-                                alert("Badge copied to clipboard! You can paste it into an email or app.");
+                                showToast("Copied to Clipboard!", "Badge copied! You can now paste it into an email or social app.", "📋", 6000);
                             } else {
                                 throw new Error("Clipboard API unsupported");
                             }
