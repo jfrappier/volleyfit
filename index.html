@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <Title>SpikeFit: 30-Min Workouts</title>
+  <title>SpikeFit: 30-Min Workouts</title>
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
   <link rel="stylesheet" href="/fonts/fonts.css">
   <style>
         :root {
-            --bg-body: #f4f6f8; /* Slightly cooler, modern grey */
+            --bg-body: #f4f6f8; 
             --bg-panel: #ffffff;
-            --text-main: #2d3748; /* Deeper slate for better contrast */
+            --text-main: #2d3748; 
             --text-muted: #718096;
             --accent: #e80a89; 
             --accent-hover: #c90875;
-            --accent-light: #fce8f3; /* Soft background for pills */
+            --accent-light: #fce8f3; 
             --border: #e2e8f0;
             --radius-sm: 8px;
             --radius-md: 12px;
@@ -35,7 +35,6 @@
             line-height: 1.75; 
         }
 
-        /* Typography */
         h1, h2, h3 { 
             color: var(--text-main); 
             font-weight: 700; 
@@ -43,381 +42,129 @@
         }
         h1, h2 { text-transform: uppercase; }
 
-        /* --- NEW: Splash Screen Styles --- */
+        /* Splash Screen Styles */
         #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #ffffff 0%, #f0f4f8 100%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
         }
-
-        #splash-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
+        #splash-screen.hidden { opacity: 0; visibility: hidden; }
 
         .splash-logo {
-            width: 80%;
-            max-width: 320px;
-            margin-bottom: 3rem;
+            width: 80%; max-width: 320px; margin-bottom: 3rem;
             animation: pulse 2.5s infinite ease-in-out;
             filter: drop-shadow(0 10px 15px rgba(232, 10, 137, 0.15));
         }
-
         .splash-loader-container {
-            width: 60%;
-            max-width: 250px;
-            height: 6px;
-            background: var(--border);
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            width: 60%; max-width: 250px; height: 6px;
+            background: var(--border); border-radius: 10px; overflow: hidden;
+            position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
         }
-
         .splash-loader-bar {
             height: 100%;
             background: linear-gradient(90deg, var(--accent), #ff66ba, var(--accent));
-            background-size: 200% 100%;
-            width: 0%;
-            border-radius: 10px;
+            background-size: 200% 100%; width: 0%; border-radius: 10px;
             animation: shimmer 1.5s infinite linear;
         }
-
         .splash-text {
-            margin-top: 1.5rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
+            margin-top: 1.5rem; font-size: 0.85rem; font-weight: 700;
+            color: var(--text-muted); letter-spacing: 0.15em; text-transform: uppercase;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.03); opacity: 0.9; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 100% 0; }
-            100% { background-position: -100% 0; }
-        }
-        /* --- End Splash Screen Styles --- */
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.03); opacity: 0.9; } }
+        @keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: -100% 0; } }
 
         /* Layout Structure */
-        #wrapper {
-            display: flex;
-            flex-direction: row;
-            min-height: 100vh;
-        }
-
-        /* Left Header Panel */
+        #wrapper { display: flex; flex-direction: row; min-height: 100vh; }
         #header {
-            width: 30%;
-            background: var(--bg-panel);
-            padding: 4em 3em;
-            border-right: solid 1px var(--border);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.02);
-            z-index: 10;
+            width: 30%; background: var(--bg-panel); padding: 4em 3em;
+            border-right: solid 1px var(--border); display: flex;
+            flex-direction: column; justify-content: flex-start;
+            position: sticky; top: 0; height: 100vh; overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.02); z-index: 10;
         }
-
-        /* Logo Branding */
-        #header h1 {
-            margin-bottom: 0.25em;
-        }
-
-        .header-logo {
-            width: 100%;
-            max-width: 220px;
-            height: auto;
-            display: block;
-        }
-
-        #header p {
-            color: var(--accent);
-            font-size: 0.9em;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-bottom: 3em;
-        }
+        #header h1 { margin-bottom: 0.25em; }
+        .header-logo { width: 100%; max-width: 220px; height: auto; display: block; }
+        #header p { color: var(--accent); font-size: 0.9em; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 3em; }
 
         /* Navigation */
-        .nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75em;
-        }
-
+        .nav { display: flex; flex-direction: column; gap: 0.75em; }
         .nav button {
-            appearance: none;
-            background: transparent;
-            border: solid 2px transparent;
-            border-radius: var(--radius-sm);
-            color: var(--text-muted);
-            cursor: pointer;
-            font-family: 'Source Sans 3', sans-serif;
-            font-size: 0.85em;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            padding: 1.25em 2em;
-            text-align: center;
-            text-decoration: none;
-            text-transform: uppercase;
-            transition: all 0.2s ease-in-out;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 1em;
+            appearance: none; background: transparent; border: solid 2px transparent;
+            border-radius: var(--radius-sm); color: var(--text-muted); cursor: pointer;
+            font-family: 'Source Sans 3', sans-serif; font-size: 0.85em; font-weight: 700;
+            letter-spacing: 0.2em; padding: 1.25em 2em; text-align: center; text-transform: uppercase;
+            transition: all 0.2s ease-in-out; width: 100%; display: flex; align-items: center; justify-content: flex-start; gap: 1em;
         }
-
-        .nav button svg {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        .nav button:hover {
-            background: var(--bg-body);
-            color: var(--text-main);
-        }
-
-        .nav button.active {
-            background: var(--bg-panel);
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: var(--shadow-sm);
-        }
+        .nav button svg { width: 20px; height: 20px; flex-shrink: 0; }
+        .nav button:hover { background: var(--bg-body); color: var(--text-main); }
+        .nav button.active { background: var(--bg-panel); border-color: var(--accent); color: var(--accent); box-shadow: var(--shadow-sm); }
 
         /* Right Content Panel */
-        #main {
-            width: 70%;
-            padding: 4em 5em;
-            display: flex;
-            flex-direction: column;
-        }
-
+        #main { width: 70%; padding: 4em 5em; display: flex; flex-direction: column; }
         .container { display: none; max-width: 800px; margin: 0 auto; width: 100%; flex: 1; }
         .container.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Section Headings */
-        .workout-section h2, #calendar h2 {
-            font-size: 1.1em;
-            color: var(--text-muted);
-            border-bottom: none;
-            padding-bottom: 0;
-            margin-bottom: 1.5em;
-            display: flex;
-            align-items: center;
-        }
-        
-        .workout-section h2::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-            margin-left: 1em;
-        }
-
+        .workout-section h2, #calendar h2 { font-size: 1.1em; color: var(--text-muted); border-bottom: none; padding-bottom: 0; margin-bottom: 1.5em; display: flex; align-items: center; }
+        .workout-section h2::after { content: ''; flex: 1; height: 1px; background: var(--border); margin-left: 1em; }
         .workout-section { margin-bottom: 3.5em; }
 
         /* Workout Progress Bar */
         .progress-container {
-            width: 100%;
-            background-color: var(--border);
-            border-radius: 20px;
-            height: 8px;
-            margin: 1.5em 0 2.5em 0;
-            overflow: hidden;
-            display: none; /* Shown via JS when workout is active */
+            width: 100%; background-color: var(--border); border-radius: 20px;
+            height: 8px; margin: 1.5em 0 2.5em 0; overflow: hidden; display: none;
         }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent), #ff66ba);
-            width: 0%;
-            border-radius: 20px;
-            transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #ff66ba); width: 0%; border-radius: 20px; transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
 
         /* Exercise Cards */
         .exercise-card {
-            background: var(--bg-panel);
-            border: solid 1px var(--border);
-            border-radius: var(--radius-md);
-            padding: 1.75em;
-            margin-bottom: 1em;
-            display: flex;
-            align-items: flex-start;
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-panel); border: solid 1px var(--border); border-radius: var(--radius-md);
+            padding: 1.75em; margin-bottom: 1em; display: flex; align-items: flex-start;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: var(--shadow-sm); cursor: pointer; position: relative; overflow: hidden;
         }
-
-        .exercise-card:hover {
-            border-color: var(--accent);
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-2px);
-        }
-
-        .exercise-card.disabled {
-            cursor: not-allowed;
-        }
-
-        /* Completed State */
-        .exercise-card.completed {
-            background-color: #f8fafc;
-            opacity: 0.7;
-            border-color: transparent;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .exercise-card.completed::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 0; bottom: 0; width: 4px;
-            background-color: #4CAF50;
-        }
-
-        .exercise-card.completed .title {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
+        .exercise-card:hover { border-color: var(--accent); box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+        .exercise-card.disabled { cursor: not-allowed; }
+        .exercise-card.completed { background-color: #f8fafc; opacity: 0.7; border-color: transparent; transform: none; box-shadow: none; }
+        .exercise-card.completed::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background-color: #4CAF50; }
+        .exercise-card.completed .title { text-decoration: line-through; color: var(--text-muted); }
 
         /* Checkbox Styling */
-        .checkbox-container {
-            margin-right: 1.5em;
-            padding-top: 0.1em;
-        }
-        
+        .checkbox-container { margin-right: 1.5em; padding-top: 0.1em; }
         input[type="checkbox"] {
-            appearance: none;
-            width: 1.75em;
-            height: 1.75em;
-            border: 2px solid #cbd5e0;
-            border-radius: 6px;
-            outline: none;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
-            background: #ffffff;
+            appearance: none; width: 1.75em; height: 1.75em; border: 2px solid #cbd5e0;
+            border-radius: 6px; outline: none; cursor: pointer; position: relative;
+            transition: all 0.2s ease; background: #ffffff;
         }
+        input[type="checkbox"]:hover:not(:disabled) { border-color: var(--accent); }
+        input[type="checkbox"]:checked { background-color: var(--accent); border-color: var(--accent); animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        input[type="checkbox"]:disabled { background-color: #f0f4f8; border-color: #cbd5e0; cursor: not-allowed; opacity: 0.6; }
 
-        input[type="checkbox"]:hover:not(:disabled) {
-            border-color: var(--accent);
-        }
+        @keyframes popIn { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        input[type="checkbox"]:checked::after { content: '✔'; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1em; }
 
-        input[type="checkbox"]:checked {
-            background-color: var(--accent);
-            border-color: var(--accent);
-            animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        input[type="checkbox"]:disabled {
-            background-color: #f0f4f8;
-            border-color: #cbd5e0;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.8); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        input[type="checkbox"]:checked::after {
-            content: '✔';
-            color: white;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1em;
-        }
-
-        /* Card Content */
         .exercise-info { flex: 1; }
         .title { color: var(--text-main); font-weight: 700; font-size: 1.25em; display: block; margin-bottom: 0.25em; letter-spacing: 0.02em;}
         .reps { font-size: 0.8em; font-weight: 700; color: var(--accent); margin-bottom: 1em; display: inline-block; text-transform: uppercase; letter-spacing: 0.1em; background: var(--accent-light); padding: 0.3em 0.8em; border-radius: var(--radius-sm);}
         .notes { font-size: 1em; margin-bottom: 1em; color: var(--text-muted); }
         
-        /* Video Pill Button */
         .video-link {
-            display: inline-flex;
-            align-items: center;
-            font-size: 0.75em;
-            color: var(--text-main);
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            background: var(--bg-body);
-            padding: 0.5em 1.2em;
-            border-radius: 20px;
-            transition: all 0.2s;
+            display: inline-flex; align-items: center; font-size: 0.75em; color: var(--text-main);
+            text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+            background: var(--bg-body); padding: 0.5em 1.2em; border-radius: 20px; transition: all 0.2s;
         }
-        
         .video-link:hover { background: var(--border); color: var(--text-main); }
         .video-link::before { content: '▶'; margin-right: 0.6em; color: var(--accent); font-size: 0.9em; }
 
-        /* Level Toggle - iOS Segmented Control Style */
-        .level-toggle { 
-            display: flex; 
-            margin-bottom: 2em; 
-            background: #e2e8f0; 
-            border-radius: var(--radius-lg); 
-            padding: 0.3em;
-            position: relative;
-        }
-        .level-toggle button { 
-            flex: 1; 
-            padding: 1em 0.5em; 
-            border: none; 
-            background: transparent; 
-            border-radius: var(--radius-md);
-            font-family: 'Source Sans 3', sans-serif; 
-            font-weight: 700; 
-            text-transform: uppercase; 
-            letter-spacing: 0.05em; 
-            font-size: 0.8em;
-            cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
-            color: var(--text-muted); 
-            z-index: 2;
-        }
+        .level-toggle { display: flex; margin-bottom: 2em; background: #e2e8f0; border-radius: var(--radius-lg); padding: 0.3em; position: relative; }
+        .level-toggle button { flex: 1; padding: 1em 0.5em; border: none; background: transparent; border-radius: var(--radius-md); font-family: 'Source Sans 3', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8em; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); color: var(--text-muted); z-index: 2; }
         .level-toggle button:hover { color: var(--text-main); }
-        .level-toggle button.active { 
-            background: #ffffff; 
-            color: var(--accent); 
-            box-shadow: var(--shadow-md);
-        }
+        .level-toggle button.active { background: #ffffff; color: var(--accent); box-shadow: var(--shadow-md); }
 
-        /* Calendar Elements */
         .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2em; }
         .month-header button { background: var(--bg-panel); border: solid 1px var(--border); padding: 0.75em 1.5em; cursor: pointer; border-radius: var(--radius-sm); font-family: 'Source Sans 3', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.8em; color: var(--text-main); transition: all 0.2s ease; box-shadow: var(--shadow-sm);}
         .month-header button:hover { border-color: var(--accent); color: var(--accent); }
@@ -430,49 +177,17 @@
         .month-date.empty { background: transparent; border: none; }
         
         /* Action Buttons */
-        .btn-reset {
-            display: block;
-            width: 100%;
-            appearance: none;
-            background: transparent;
-            border: solid 2px var(--border);
-            border-radius: var(--radius-sm);
-            color: var(--text-main);
-            cursor: pointer;
-            font-family: 'Source Sans 3', sans-serif;
-            font-size: 0.9em;
-            font-weight: 700;
-            letter-spacing: 0.2em;
-            padding: 1.25em;
-            text-align: center;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-            margin-top: 3em;
-        }
+        .btn-reset { display: block; width: 100%; appearance: none; background: transparent; border: solid 2px var(--border); border-radius: var(--radius-sm); color: var(--text-main); cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-size: 0.9em; font-weight: 700; letter-spacing: 0.2em; padding: 1.25em; text-align: center; text-transform: uppercase; transition: all 0.2s ease; margin-top: 3em; }
         .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
-
         .btn-start { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 0; box-shadow: var(--shadow-md);}
         .btn-start:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; }
-        
         .btn-start.started { background: var(--text-main); border-color: var(--text-main); cursor: default; box-shadow: none; }
         .btn-start.started:hover { background: var(--text-main); border-color: var(--text-main); color: #ffffff; }
-
         .btn-complete { background: var(--accent); color: #ffffff; border-color: var(--accent); margin-top: 3em; margin-bottom: 1em; box-shadow: var(--shadow-md);}
         .btn-complete:hover:not(:disabled) { background: var(--accent-hover); border-color: var(--accent-hover); color: #ffffff; box-shadow: var(--shadow-hover); transform: translateY(-1px);}
-        
         .btn-complete:disabled { background: var(--border); color: var(--text-muted); border-color: var(--border); cursor: not-allowed; box-shadow: none; transform: none; }
 
-        /* Calendar Schedule specific */
-        .calendar-day {
-            background: var(--bg-panel);
-            border: solid 1px var(--border);
-            border-left: solid 4px var(--border);
-            padding: 1.5em 2em;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow-sm);
-        }
+        .calendar-day { background: var(--bg-panel); border: solid 1px var(--border); border-left: solid 4px var(--border); padding: 1.5em 2em; border-radius: var(--radius-md); cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-sm); }
         .calendar-day:hover { border-left-color: var(--accent); transform: translateX(4px); box-shadow: var(--shadow-md); }
         .calendar-day.today { border-left-color: var(--accent); background: #ffffff; box-shadow: var(--shadow-hover); }
 
@@ -480,7 +195,11 @@
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; animation: fadeIn 0.3s ease-in-out; backdrop-filter: blur(4px); }
         .modal-content { background: var(--bg-panel); padding: 3em 2em; border-radius: var(--radius-lg); text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; }
         .modal-content h2 { margin-bottom: 0.5em; color: var(--text-main); }
-        .badge-svg { width: 120px; height: 120px; margin: 0 auto 1.5em auto; display: block; filter: drop-shadow(0 10px 15px rgba(232, 10, 137, 0.3));}
+        
+        /* Updated Share Preview Styling */
+        #share-image-preview { width: 100%; border-radius: var(--radius-sm); margin-bottom: 1.5em; box-shadow: var(--shadow-md); display: none; }
+        .badge-loader { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 2em auto; display: none; }
+        
         .badge-details { background: var(--bg-body); padding: 1.5em; border-radius: var(--radius-sm); margin-bottom: 2em; border: 1px solid var(--border); }
         .badge-details p { margin: 0.25em 0; font-weight: 600; color: var(--text-muted); font-size: 0.9em; letter-spacing: 0.05em; text-transform: uppercase;}
         .badge-details p span { color: var(--text-main); }
@@ -499,174 +218,34 @@
         .btn-agree { flex-shrink: 0; appearance: none; border: none; border-radius: var(--radius-sm); background: var(--text-main); color: #ffffff; margin-top: 0.5em; width: 100%; padding: 1.25em; font-size: 1em; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;}
         .btn-agree:hover { background: var(--text-muted); }
 
-        /* --- NEW: Footer Styles --- */
-        #site-footer {
-            margin-top: auto;
-            padding-top: 3em;
-            border-top: solid 1px var(--border);
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85em;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1em;
-            width: 100%;
-            max-width: 800px;
-            align-self: center;
-        }
+        #site-footer { margin-top: auto; padding-top: 3em; border-top: solid 1px var(--border); text-align: center; color: var(--text-muted); font-size: 0.85em; display: flex; flex-direction: column; align-items: center; gap: 1em; width: 100%; max-width: 800px; align-self: center; }
+        .footer-links { display: flex; gap: 1.5em; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-muted); text-decoration: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s ease; font-size: 0.9em; }
+        .footer-links a:hover { color: var(--accent); }
+        .footer-links .separator { color: var(--border); }
 
-        .footer-links {
-            display: flex;
-            gap: 1.5em;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            transition: color 0.2s ease;
-            font-size: 0.9em;
-        }
-
-        .footer-links a:hover {
-            color: var(--accent);
-        }
-
-        .footer-links .separator {
-            color: var(--border);
-        }
-
-        /* --- NEW: Toast Notification --- */
-        .toast-container {
-            position: fixed;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%) translateY(150px);
-            background: var(--bg-panel);
-            border: 2px solid var(--accent);
-            border-radius: var(--radius-lg);
-            padding: 1.25em 1.5em;
-            box-shadow: 0 10px 30px rgba(232, 10, 137, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 1em;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 90%;
-            max-width: 400px;
-        }
-        .toast-container.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-            visibility: visible;
-        }
-        .toast-icon {
-            font-size: 2.2em;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-        }
-        .toast-content {
-            flex: 1;
-            text-align: left;
-        }
-        .toast-title {
-            color: var(--text-main);
-            font-weight: 700;
-            font-size: 1.05em;
-            margin-bottom: 0.2em;
-            letter-spacing: 0.02em;
-            text-transform: uppercase;
-        }
-        .toast-text {
-            color: var(--text-muted);
-            font-size: 0.85em;
-            line-height: 1.4;
-        }
-        .toast-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 1.8em;
-            cursor: pointer;
-            padding: 0;
-            line-height: 1;
-            transition: color 0.2s;
-        }
-        .toast-close:hover {
-            color: var(--accent);
-        }
+        /* Toast Notification */
+        .toast-container { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(150px); background: var(--bg-panel); border: 2px solid var(--accent); border-radius: var(--radius-lg); padding: 1.25em 1.5em; box-shadow: 0 10px 30px rgba(232, 10, 137, 0.2); display: flex; align-items: center; gap: 1em; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); width: 90%; max-width: 400px; }
+        .toast-container.show { transform: translateX(-50%) translateY(0); opacity: 1; visibility: visible; }
+        .toast-icon { font-size: 2.2em; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .toast-content { flex: 1; text-align: left; }
+        .toast-title { color: var(--text-main); font-weight: 700; font-size: 1.05em; margin-bottom: 0.2em; letter-spacing: 0.02em; text-transform: uppercase; }
+        .toast-text { color: var(--text-muted); font-size: 0.85em; line-height: 1.4; }
+        .toast-close { background: none; border: none; color: var(--text-muted); font-size: 1.8em; cursor: pointer; padding: 0; line-height: 1; transition: color 0.2s; }
+        .toast-close:hover { color: var(--accent); }
 
         /* Responsive Design */
         @media screen and (max-width: 980px) {
-            #wrapper { 
-                flex-direction: column; 
-                padding-bottom: 85px; /* Added spacing so content doesn't hide behind the bottom nav */
-            }
-            #header { 
-                width: 100%; 
-                height: auto; 
-                position: relative; 
-                padding: 2em 1.5em; 
-                border-right: none; 
-                border-bottom: solid 1px var(--border); 
-                text-align: center; 
-            }
+            #wrapper { flex-direction: column; padding-bottom: 85px; }
+            #header { width: 100%; height: auto; position: relative; padding: 2em 1.5em; border-right: none; border-bottom: solid 1px var(--border); text-align: center; }
             .header-logo { margin: 0 auto; }
             #header p { margin-bottom: 0; }
-            
-            /* Native App Bottom Nav styling */
-            .nav { 
-                flex-direction: row; 
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                background: var(--bg-panel);
-                border-top: 1px solid var(--border);
-                box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
-                z-index: 1000;
-                gap: 0;
-                padding-bottom: env(safe-area-inset-bottom);
-                justify-content: space-around;
-            }
-
-            .nav button { 
-                width: 25%; 
-                padding: 0.8em 0.2em calc(0.8em + env(safe-area-inset-bottom));
-                border-radius: 0;
-                border: none;
-                border-top: 3px solid transparent;
-                font-size: 0.65em;
-                height: auto;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                gap: 0.4em;
-            }
-
-            .nav button svg {
-                width: 22px;
-                height: 22px;
-                stroke-width: 2px;
-            }
-
-            .nav button.active {
-                background: transparent;
-                border-top-color: var(--accent);
-                color: var(--accent);
-                box-shadow: none;
-            }
-            
+            .nav { flex-direction: row; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-panel); border-top: 1px solid var(--border); box-shadow: 0 -4px 15px rgba(0,0,0,0.05); z-index: 1000; gap: 0; padding-bottom: env(safe-area-inset-bottom); justify-content: space-around; }
+            .nav button { width: 25%; padding: 0.8em 0.2em calc(0.8em + env(safe-area-inset-bottom)); border-radius: 0; border: none; border-top: 3px solid transparent; font-size: 0.65em; height: auto; flex-direction: column; align-items: center; justify-content: center; gap: 0.4em; }
+            .nav button svg { width: 22px; height: 22px; stroke-width: 2px; }
+            .nav button.active { background: transparent; border-top-color: var(--accent); color: var(--accent); box-shadow: none; }
             #main { width: 100%; padding: 3em 1.5em; }
         }
-        
         @media screen and (max-width: 480px) {
             #main { padding: 2em 1em; }
             .exercise-card { flex-direction: column; position: relative; padding: 1.5em; }
@@ -676,21 +255,14 @@
             .level-toggle button { margin-bottom: 0.25em; }
             .month-grid { gap: 0.25em; }
             .month-date { padding: 1em 0; font-size: 0.9em; }
-
-            /* Footer Mobile */
-            .footer-links {
-                flex-direction: column;
-                gap: 0.8em;
-            }
-            .footer-links .separator {
-                display: none;
-            }
+            .footer-links { flex-direction: column; gap: 0.8em; }
+            .footer-links .separator { display: none; }
         }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-    <!-- Splash Screen -->
     <div id="splash-screen">
         <img src="logo.png" alt="SpikeFit Logo" class="splash-logo" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/logo.png'">
         <div class="splash-loader-container">
@@ -729,13 +301,10 @@
                 <div id="workout-controls" style="margin-bottom: 1.5em; text-align: center;">
                     <button id="btn-start-workout" class="btn-reset btn-start" onclick="startWorkout()">Start Workout</button>
                 </div>
-                
                 <div class="progress-container" id="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
                 </div>
-
-                <div id="workout-content">
-                    </div>
+                <div id="workout-content"></div>
                 <button class="btn-reset btn-complete" onclick="markWorkoutComplete()">Mark Workout Complete</button>
                 <button class="btn-reset" style="margin-top: 0; color: var(--text-muted);" onclick="resetDay()">Reset Today's Progress</button>
             </div>
@@ -743,15 +312,12 @@
             <div id="schedule" class="container">
                 <h2 style="font-size: 1.5em; border:none; margin-bottom: 0.5em; color: var(--text-main);">Rotating Schedule</h2>
                 <p style="margin-bottom: 2em; color: var(--text-muted);">Select a day below to set it as your current active workout.</p>
-                
                 <div class="level-toggle">
                     <button id="btn-level-beginner" class="active" onclick="setLevel('beginner')">Beginner</button>
                     <button id="btn-level-intermediate" onclick="setLevel('intermediate')">Intermediate</button>
                     <button id="btn-level-advanced" onclick="setLevel('advanced')">Advanced</button>
                 </div>
-
-                <div id="schedule-content" style="display: grid; gap: 1em;">
-                    </div>
+                <div id="schedule-content" style="display: grid; gap: 1em;"></div>
             </div>
 
             <div id="history" class="container">
@@ -762,11 +328,9 @@
                     <h3 id="month-year-display" style="margin:0; border:none; padding:0; letter-spacing: 0.1em; text-transform: uppercase;"></h3>
                     <button onclick="changeMonth(1)" id="btn-next-month">Next &gt;</button>
                 </div>
-                <div class="month-grid" id="month-grid-content">
-                    </div>
+                <div class="month-grid" id="month-grid-content"></div>
             </div>
 
-            <!-- Global Footer inside Main Panel -->
             <footer id="site-footer">
                 <div class="footer-links">
                     <a href="#" onclick="event.preventDefault(); openPrivacyModal();">Data Privacy</a>
@@ -780,20 +344,15 @@
     <!-- Modals -->
     <div id="badge-modal" class="modal-overlay">
         <div class="modal-content">
-            <svg class="badge-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="50" cy="50" r="45" fill="#e80a89" />
-                <path d="M30 45 L45 60 L75 30" stroke="white" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                <text x="50" y="82" font-family="'Source Sans 3', sans-serif" font-size="12" fill="white" font-weight="700" letter-spacing="1" text-anchor="middle">SPIKEFIT</text>
-            </svg>
-            <h2>Workout Complete!</h2>
-            <p style="margin-bottom: 1.5em; color: var(--text-muted);">Great job crushing today's session.</p>
+            <h2 style="margin-bottom: 1em;">Workout Complete!</h2>
             
-            <div class="badge-details">
-                <p id="badge-date-text"></p>
-                <p id="badge-time-text"></p>
-            </div>
+            <!-- Generated Image Preview -->
+            <div id="badge-loader" class="badge-loader"></div>
+            <img id="share-image-preview" src="" alt="Workout Badge">
+            
+            <p style="margin-bottom: 1.5em; color: var(--text-muted); font-size: 0.9em;">Show off your hard work!</p>
 
-            <button id="btn-share-badge" class="btn-reset btn-share" onclick="shareBadge()">Share Workout</button>
+            <button id="btn-share-badge" class="btn-reset btn-share" onclick="shareBadge()" disabled>Generating Badge...</button>
             <button class="btn-reset btn-close-modal" onclick="closeBadgeModal()">Close</button>
         </div>
     </div>
@@ -823,7 +382,6 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
     <div id="app-toast" class="toast-container">
         <div class="toast-icon" id="toast-icon">🥤</div>
         <div class="toast-content">
@@ -1130,15 +688,16 @@
             { day: 'Sunday', workout: 'Rest/Run' }
         ];
 
-        // State Management
         let currentDayIndex = (new Date().getDay() + 6) % 7; 
         let completedExercises = JSON.parse(localStorage.getItem('completedExercises')) || {};
         let completedDates = JSON.parse(localStorage.getItem('completedDates')) || {};
         let historyCalDate = new Date();
         let activeWorkoutStart = localStorage.getItem('activeWorkoutStart') || null;
-        
         let workoutLevel = localStorage.getItem('workoutLevel') || 'beginner';
         let manualLevelOverride = localStorage.getItem('manualLevelOverride') === 'true';
+
+        // Add a global variable to store the shared badge blob
+        window.currentShareBlob = null;
 
         function getWorkoutKey(baseKey) {
             if (baseKey === 'Rest/Run') return baseKey;
@@ -1152,7 +711,6 @@
             localStorage.setItem('completedDates', JSON.stringify(completedDates));
         }
 
-        // Logic Functions
         function switchTab(tabId) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
@@ -1165,9 +723,7 @@
         }
 
         function toggleExercise(id, cardElement) {
-            if (!activeWorkoutStart) {
-                return; // Prevent interactions if workout hasn't started
-            }
+            if (!activeWorkoutStart) return; 
 
             completedExercises[id] = !completedExercises[id];
             saveState();
@@ -1193,14 +749,10 @@
             }
             
             document.getElementById('progress-container').style.display = 'block';
-            let totalEx = 0;
-            let checkedEx = 0;
+            let totalEx = 0; let checkedEx = 0;
             
             workout.blocks.forEach(block => {
-                block.exercises.forEach(ex => {
-                    totalEx++;
-                    if (completedExercises[ex.id]) checkedEx++;
-                });
+                block.exercises.forEach(ex => { totalEx++; if (completedExercises[ex.id]) checkedEx++; });
             });
             
             const pct = totalEx === 0 ? 0 : Math.round((checkedEx / totalEx) * 100);
@@ -1216,10 +768,7 @@
             let allChecked = true;
             for (const block of workout.blocks) {
                 for (const ex of block.exercises) {
-                    if (!completedExercises[ex.id]) {
-                        allChecked = false;
-                        break;
-                    }
+                    if (!completedExercises[ex.id]) { allChecked = false; break; }
                 }
                 if (!allChecked) break;
             }
@@ -1234,9 +783,7 @@
                 
                 if(currentWorkout) {
                     currentWorkout.blocks.forEach(block => {
-                        block.exercises.forEach(ex => {
-                            completedExercises[ex.id] = false;
-                        });
+                        block.exercises.forEach(ex => { completedExercises[ex.id] = false; });
                     });
                 }
                 activeWorkoutStart = null;
@@ -1257,16 +804,14 @@
             document.getElementById('daily').classList.add('active');
             document.querySelectorAll('.nav button')[0].classList.add('active');
 
-            if(window.innerWidth <= 980) {
-                window.scrollTo({ top: document.getElementById('main').offsetTop - 20, behavior: 'smooth' });
-            }
+            if(window.innerWidth <= 980) { window.scrollTo({ top: document.getElementById('main').offsetTop - 20, behavior: 'smooth' }); }
         }
 
         function startWorkout() {
             if (!activeWorkoutStart) {
                 activeWorkoutStart = new Date().toISOString();
                 localStorage.setItem('activeWorkoutStart', activeWorkoutStart);
-                renderDaily(); // Re-render to enable everything
+                renderDaily(); 
             }
         }
 
@@ -1308,16 +853,13 @@
             const month = String(today.getMonth() + 1).padStart(2, '0');
             const day = String(today.getDate()).padStart(2, '0');
             const dateStr = `${year}-${month}-${day}`;
-
-            const displayDate = today.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
-            let startTimeStr = "N/A";
-            let endTimeStr = today.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            let durationText = "";
+            const displayDate = today.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+            
             let mins = 0;
+            let durationText = "";
 
             if (activeWorkoutStart) {
                 const start = new Date(activeWorkoutStart);
-                startTimeStr = start.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 const durationMs = today - start;
                 mins = Math.max(1, Math.floor(durationMs / 60000));
                 durationText = ` (${mins} min)`;
@@ -1329,9 +871,8 @@
 
             saveState();
             renderHistoryCalendar();
-            renderDaily(); // Re-render to visually disable cards again
+            renderDaily(); 
             
-            // Auto Upgrade Logic
             const completedCount = Object.keys(completedDates).length;
             if (completedCount >= 16 && workoutLevel === 'intermediate' && !manualLevelOverride) {
                 setLevel('advanced', true);
@@ -1341,15 +882,6 @@
                 alert("🎉 LEVEL UP! You've successfully logged two weeks of workouts. We've automatically upgraded your schedule to the Intermediate plan! Keep crushing it!");
             }
             
-            // Populate and Show Badge Modal
-            document.getElementById('badge-date-text').innerHTML = `Date: <span>${displayDate}</span>`;
-            if (startTimeStr !== "N/A") {
-                document.getElementById('badge-time-text').innerHTML = `Time: <span>${startTimeStr} - ${endTimeStr}</span><br><span style="color:var(--accent); font-size:0.85em; display:block; margin-top:0.5em;">${mins} Minutes</span>`;
-            } else {
-                document.getElementById('badge-time-text').innerHTML = `Completed at: <span>${endTimeStr}</span>`;
-            }
-            document.getElementById('badge-modal').style.display = 'flex';
-            
             const btn = document.querySelector('.btn-complete');
             if (btn) {
                 const originalText = "Mark Workout Complete";
@@ -1358,21 +890,180 @@
                 btn.style.borderColor = "#4CAF50";
                 btn.style.color = "#ffffff";
                 setTimeout(() => { 
-                    btn.innerText = originalText; 
-                    btn.style.background = ""; 
-                    btn.style.borderColor = ""; 
-                    btn.style.color = "";
+                    btn.innerText = originalText; btn.style.background = ""; btn.style.borderColor = ""; btn.style.color = "";
                 }, 4000);
             }
+
+            // Generate Canvas Badge and Open Modal
+            generateShareImage(document.getElementById('current-workout-title').innerText, displayDate, mins);
+            document.getElementById('badge-modal').style.display = 'flex';
+        }
+
+        // --- NEW: Generate Shareable Canvas Image ---
+        async function generateShareImage(workoutName, dateStr, durationMins) {
+            const previewImg = document.getElementById('share-image-preview');
+            const loader = document.getElementById('badge-loader');
+            const shareBtn = document.getElementById('btn-share-badge');
+            
+            previewImg.style.display = 'none';
+            loader.style.display = 'block';
+            shareBtn.disabled = true;
+            shareBtn.innerText = "Generating Badge...";
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080;
+            canvas.height = 1080;
+            const ctx = canvas.getContext('2d');
+
+            // 1. Draw Base Dark Background
+            ctx.fillStyle = '#1a0e24'; // Deep dark purple matching the character image theme
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Add a subtle glow behind the character
+            const bgGlow = ctx.createRadialGradient(canvas.width / 2, 400, 50, canvas.width / 2, 400, 500);
+            bgGlow.addColorStop(0, 'rgba(232, 10, 137, 0.25)'); // SpikeFit accent color glow
+            bgGlow.addColorStop(1, 'rgba(26, 14, 36, 0)');
+            ctx.fillStyle = bgGlow;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Load and Draw the Character Image
+            const img = new Image();
+            
+            // NOTE: Removed crossOrigin attribute to prevent local file blocking
+            // Updated to the new transparent PNG
+            img.src = 'img/badge_char.png'; 
+
+            await new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = () => { 
+                    console.warn("Failed to load character image. Check if 'img/badge_char.png' exists in the directory."); 
+                    resolve(); 
+                };
+            });
+
+            if (img.complete && img.naturalWidth > 0) {
+                // Scale the character to fit nicely in the top 780px
+                const maxHeight = 780;
+                const maxWidth = canvas.width * 0.95; 
+                
+                // Use Math.min to ensure the entire character fits inside the area without being cropped
+                const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+                const drawWidth = img.width * scale;
+                const drawHeight = img.height * scale;
+                
+                // Center perfectly horizontally and vertically within the upper area
+                const offsetX = (canvas.width - drawWidth) / 2; 
+                const offsetY = Math.max(0, (maxHeight - drawHeight) / 2); 
+
+                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+                // Add a smooth gradient overlay to blend the bottom of the character into the text area
+                const gradient = ctx.createLinearGradient(0, 650, 0, 800);
+                gradient.addColorStop(0, 'rgba(26, 14, 36, 0)');
+                gradient.addColorStop(1, 'rgba(26, 14, 36, 1)');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 650, canvas.width, 150);
+            }
+
+            // 3. Draw Text Elements
+            ctx.textAlign = 'center';
+            
+            // SpikeFit Logo text
+            ctx.fillStyle = '#e80a89';
+            ctx.font = 'bold 55px "Source Sans 3", Arial, sans-serif';
+            ctx.fillText('SPIKEFIT', canvas.width / 2, 85);
+
+            // "WORKOUT COMPLETE" Stamp
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 95px "Source Sans 3", Arial, sans-serif';
+            // Add subtle glow to main text
+            ctx.shadowColor = 'rgba(232, 10, 137, 0.5)';
+            ctx.shadowBlur = 20;
+            ctx.fillText('WORKOUT COMPLETE', canvas.width / 2, 780);
+            ctx.shadowBlur = 0; // Reset shadow
+
+            // Workout Name
+            ctx.fillStyle = '#fce8f3';
+            ctx.font = '60px "Source Sans 3", Arial, sans-serif';
+            ctx.fillText(workoutName, canvas.width / 2, 880);
+
+            // Divider Line
+            ctx.fillStyle = '#e80a89';
+            ctx.fillRect(canvas.width / 2 - 75, 930, 150, 6);
+
+            // Stats (Date & Duration)
+            ctx.fillStyle = '#a0aec0';
+            ctx.font = 'bold 45px "Source Sans 3", Arial, sans-serif';
+            const statsText = `${dateStr}   •   ${durationMins > 0 ? durationMins + ' MINS' : 'LOGGED'}`;
+            ctx.fillText(statsText, canvas.width / 2, 1010);
+
+            // 4. Output to UI and Store Blob
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+            previewImg.src = dataUrl;
+            
+            // Generate Blob for sharing capabilities
+            window.currentShareBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+
+            loader.style.display = 'none';
+            previewImg.style.display = 'block';
+            shareBtn.disabled = false;
+            shareBtn.innerText = "Share Workout";
+        }
+
+        async function shareBadge() {
+            const workoutName = document.getElementById('current-workout-title').innerText;
+            const textToShare = `I just crushed "${workoutName}" on SpikeFit! 🏐🔥`;
+            const shareBtn = document.getElementById('btn-share-badge');
+            const origTxt = shareBtn.innerText;
+
+            try {
+                shareBtn.innerText = "Preparing...";
+                
+                // If we successfully created the image blob
+                if (window.currentShareBlob) {
+                    const file = new File([window.currentShareBlob], 'spikefit-badge.jpg', { type: 'image/jpeg' });
+
+                    // Check if native file sharing is supported (Mobile Safari/Chrome, etc.)
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                            title: 'SpikeFit Workout Complete',
+                            text: textToShare
+                        });
+                        shareBtn.innerText = "Shared!";
+                    } else {
+                        // Fallback 1: Download the image
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(window.currentShareBlob);
+                        link.download = 'spikefit-badge.jpg';
+                        link.click();
+                        shareBtn.innerText = "Image Downloaded!";
+
+                        // Fallback 2: Copy the text to clipboard
+                        const textArea = document.createElement("textarea");
+                        textArea.value = textToShare;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                    }
+                } else {
+                    // Total fallback to just text if canvas failed
+                    if (navigator.share) {
+                        await navigator.share({ title: 'SpikeFit Workout Complete', text: textToShare });
+                    }
+                }
+            } catch (err) {
+                console.error('Share failed:', err);
+                if (err.name !== 'AbortError') { shareBtn.innerText = "Share Canceled"; }
+            }
+
+            setTimeout(() => { shareBtn.innerText = origTxt; }, 3000);
         }
 
         function closeBadgeModal() { 
             document.getElementById('badge-modal').style.display = 'none'; 
-            
-            // Show snack reminder toast after closing the badge
-            setTimeout(() => {
-                showToast("Time to Refuel!", "Don't forget to grab a protein shake or a healthy snack for recovery.", "🥤");
-            }, 400); // Slight delay for smooth transition
+            setTimeout(() => { showToast("Time to Refuel!", "Don't forget to grab a protein shake or a healthy snack for recovery.", "🥤"); }, 400); 
         }
 
         function showToast(title, text, icon = "🥤", duration = 8000) {
@@ -1384,38 +1075,10 @@
             toast.classList.add('show');
             
             if (window.toastTimeout) clearTimeout(window.toastTimeout);
-            window.toastTimeout = setTimeout(() => {
-                closeToast();
-            }, duration);
+            window.toastTimeout = setTimeout(() => { closeToast(); }, duration);
         }
 
-        function closeToast() {
-            document.getElementById('app-toast').classList.remove('show');
-        }
-
-        function shareBadge() {
-            const dateStr = document.getElementById('badge-date-text').innerText;
-            const timeStr = document.getElementById('badge-time-text').innerText.replace(/\n/g, ' ');
-            const workoutName = document.getElementById('current-workout-title').innerText;
-            const textToShare = `I just crushed "${workoutName}" on SpikeFit! 🏐💪\n${dateStr}\n${timeStr}`;
-
-            if (navigator.share) {
-                navigator.share({ title: 'SpikeFit Workout Complete', text: textToShare }).catch(console.error);
-            } else {
-                const textArea = document.createElement("textarea");
-                textArea.value = textToShare;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    const shareBtn = document.getElementById('btn-share-badge');
-                    const origTxt = shareBtn.innerText;
-                    shareBtn.innerText = "Copied to Clipboard!";
-                    setTimeout(() => { shareBtn.innerText = origTxt; }, 3000);
-                } catch (err) { console.error('Failed to copy', err); }
-                document.body.removeChild(textArea);
-            }
-        }
+        function closeToast() { document.getElementById('app-toast').classList.remove('show'); }
 
         function renderDaily() {
             const content = document.getElementById('workout-content');
@@ -1532,14 +1195,13 @@
         }
 
         function checkStreak() {
-            // Only show the welcome/streak toast once per session
             if (sessionStorage.getItem('welcomeToastShown')) return;
             sessionStorage.setItem('welcomeToastShown', 'true');
 
             const today = new Date();
             const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
             
-            const dates = Object.keys(completedDates).sort((a,b) => new Date(b) - new Date(a)); // descending
+            const dates = Object.keys(completedDates).sort((a,b) => new Date(b) - new Date(a)); 
             if (dates.length === 0) return; 
 
             let streak = 0;
@@ -1555,14 +1217,12 @@
                  return;
             }
 
-            // Count streak going backwards from today
             for(let i=0; i<365; i++) {
                 const checkStr = currentCheckDate.getFullYear() + '-' + String(currentCheckDate.getMonth() + 1).padStart(2, '0') + '-' + String(currentCheckDate.getDate()).padStart(2, '0');
                 if (completedDates[checkStr]) {
                     streak++;
                     currentCheckDate.setDate(currentCheckDate.getDate() - 1);
                 } else if (i === 0 && !completedDates[todayStr]) {
-                    // It's fine if they haven't worked out YET today, just check yesterday
                     currentCheckDate.setDate(currentCheckDate.getDate() - 1);
                 } else {
                     break;
@@ -1584,19 +1244,9 @@
             }
         }
         
-        function openDisclaimerModal() {
-            document.getElementById('disclaimer-modal').style.display = 'flex';
-        }
-
-        function acceptDisclaimer() { 
-            localStorage.setItem('disclaimerAgreed', 'true'); 
-            document.getElementById('disclaimer-modal').style.display = 'none'; 
-            setTimeout(checkStreak, 500);
-        }
-
-        function openPrivacyModal() { 
-            document.getElementById('privacy-modal').style.display = 'flex'; 
-        }
+        function openDisclaimerModal() { document.getElementById('disclaimer-modal').style.display = 'flex'; }
+        function acceptDisclaimer() { localStorage.setItem('disclaimerAgreed', 'true'); document.getElementById('disclaimer-modal').style.display = 'none'; setTimeout(checkStreak, 500); }
+        function openPrivacyModal() { document.getElementById('privacy-modal').style.display = 'flex'; }
         function closePrivacyModal() { document.getElementById('privacy-modal').style.display = 'none'; }
 
         // --- Init Functionality ---
@@ -1609,14 +1259,14 @@
         renderHistoryCalendar();
 
         // --- Splash Screen Logic ---
-        document.body.style.overflow = 'hidden'; // Prevent scrolling during splash
+        document.body.style.overflow = 'hidden'; 
         const splashScreen = document.getElementById('splash-screen');
         const splashProgress = document.getElementById('splash-progress');
         const splashText = document.getElementById('splash-text');
 
         let progress = 0;
-        const splashDuration = 3000; // 3 seconds
-        const intervalTime = 30; // update every 30ms
+        const splashDuration = 3000; 
+        const intervalTime = 30; 
         const steps = splashDuration / intervalTime;
         const increment = 100 / steps;
 
@@ -1634,11 +1284,9 @@
                 clearInterval(splashInterval);
                 setTimeout(() => {
                     splashScreen.classList.add('hidden');
-                    document.body.style.overflow = ''; // Restore scrolling
-                    
-                    // Wait for the fade-out transition to finish, then check disclaimer
+                    document.body.style.overflow = ''; 
                     setTimeout(checkDisclaimer, 600); 
-                }, 200); // Tiny pause at 100% before fading out
+                }, 200); 
             }
         }, intervalTime);
 
