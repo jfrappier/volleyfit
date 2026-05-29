@@ -196,7 +196,6 @@
         .modal-content { background: var(--bg-panel); padding: 3em 2em; border-radius: var(--radius-lg); text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; }
         .modal-content h2 { margin-bottom: 0.5em; color: var(--text-main); }
         
-        /* Updated Share Preview Styling */
         #share-image-preview { width: 100%; border-radius: var(--radius-sm); margin-bottom: 1.5em; box-shadow: var(--shadow-md); display: none; }
         .badge-loader { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 2em auto; display: none; }
         
@@ -899,7 +898,7 @@
             document.getElementById('badge-modal').style.display = 'flex';
         }
 
-        // --- NEW: Generate Shareable Canvas Image ---
+        // --- UPDATED: Generate Shareable Canvas Image with Taint Protection ---
         async function generateShareImage(workoutName, dateStr, durationMins) {
             const previewImg = document.getElementById('share-image-preview');
             const loader = document.getElementById('badge-loader');
@@ -916,29 +915,37 @@
             const ctx = canvas.getContext('2d');
 
             // 1. Draw Base Dark Background
-            ctx.fillStyle = '#1a0e24'; // Deep dark purple matching the character image theme
+            ctx.fillStyle = '#1a0e24'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Add a subtle glow behind the character
             const bgGlow = ctx.createRadialGradient(canvas.width / 2, 400, 50, canvas.width / 2, 400, 500);
-            bgGlow.addColorStop(0, 'rgba(232, 10, 137, 0.25)'); // SpikeFit accent color glow
+            bgGlow.addColorStop(0, 'rgba(232, 10, 137, 0.25)'); 
             bgGlow.addColorStop(1, 'rgba(26, 14, 36, 0)');
             ctx.fillStyle = bgGlow;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 2. Load and Draw the Character Image
+            // 2. Load and Draw the Character Image securely
             const img = new Image();
-            
-            // NOTE: Removed crossOrigin attribute to prevent local file blocking
-            // Updated to the new transparent PNG
-            img.src = 'img/badge_char.png'; 
+            img.crossOrigin = "anonymous"; // CRITICAL: Prevents canvas tainting!
 
             await new Promise((resolve) => {
                 img.onload = resolve;
                 img.onerror = () => { 
-                    console.warn("Failed to load character image. Check if 'img/badge_char.png' exists in the directory."); 
-                    resolve(); 
+                    console.warn("Failed to load local character image. Falling back to remote raw github URL.");
+                    // Fallback to absolute URL if pathing is wrong
+                    img.crossOrigin = "anonymous";
+                    img.onerror = resolve; // Just resolve if it completely fails, so we still show text badge
+                    img.src = 'https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/img/badge_char.png';
                 };
+                
+                // CRITICAL FIX: If running locally via file://, a local image automatically taints the canvas, 
+                // completely blocking sharing. Force the remote secure URL in this case.
+                if (window.location.protocol === 'file:') {
+                    img.src = 'https://raw.githubusercontent.com/jfrappier/spikefit/refs/heads/main/img/badge_char.png';
+                } else {
+                    img.src = 'img/badge_char.png'; 
+                }
             });
 
             if (img.complete && img.naturalWidth > 0) {
@@ -946,18 +953,16 @@
                 const maxHeight = 780;
                 const maxWidth = canvas.width * 0.95; 
                 
-                // Use Math.min to ensure the entire character fits inside the area without being cropped
                 const scale = Math.min(maxWidth / img.width, maxHeight / img.height);
                 const drawWidth = img.width * scale;
                 const drawHeight = img.height * scale;
                 
-                // Center perfectly horizontally and vertically within the upper area
                 const offsetX = (canvas.width - drawWidth) / 2; 
                 const offsetY = Math.max(0, (maxHeight - drawHeight) / 2); 
 
                 ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
-                // Add a smooth gradient overlay to blend the bottom of the character into the text area
+                // Blend bottom of the character into the text area
                 const gradient = ctx.createLinearGradient(0, 650, 0, 800);
                 gradient.addColorStop(0, 'rgba(26, 14, 36, 0)');
                 gradient.addColorStop(1, 'rgba(26, 14, 36, 1)');
@@ -968,41 +973,40 @@
             // 3. Draw Text Elements
             ctx.textAlign = 'center';
             
-            // SpikeFit Logo text
             ctx.fillStyle = '#e80a89';
             ctx.font = 'bold 55px "Source Sans 3", Arial, sans-serif';
             ctx.fillText('SPIKEFIT', canvas.width / 2, 85);
 
-            // "WORKOUT COMPLETE" Stamp
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 95px "Source Sans 3", Arial, sans-serif';
-            // Add subtle glow to main text
             ctx.shadowColor = 'rgba(232, 10, 137, 0.5)';
             ctx.shadowBlur = 20;
             ctx.fillText('WORKOUT COMPLETE', canvas.width / 2, 780);
-            ctx.shadowBlur = 0; // Reset shadow
+            ctx.shadowBlur = 0; 
 
-            // Workout Name
             ctx.fillStyle = '#fce8f3';
             ctx.font = '60px "Source Sans 3", Arial, sans-serif';
             ctx.fillText(workoutName, canvas.width / 2, 880);
 
-            // Divider Line
             ctx.fillStyle = '#e80a89';
             ctx.fillRect(canvas.width / 2 - 75, 930, 150, 6);
 
-            // Stats (Date & Duration)
             ctx.fillStyle = '#a0aec0';
             ctx.font = 'bold 45px "Source Sans 3", Arial, sans-serif';
             const statsText = `${dateStr}   •   ${durationMins > 0 ? durationMins + ' MINS' : 'LOGGED'}`;
             ctx.fillText(statsText, canvas.width / 2, 1010);
 
-            // 4. Output to UI and Store Blob
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-            previewImg.src = dataUrl;
-            
-            // Generate Blob for sharing capabilities
-            window.currentShareBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+            // 4. Output to UI and Store Blob Safely
+            try {
+                const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+                previewImg.src = dataUrl;
+                
+                // Generate Blob for sharing capabilities
+                window.currentShareBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
+            } catch (err) {
+                console.error("Canvas export failed (Canvas is likely tainted by a security policy).", err);
+                window.currentShareBlob = null;
+            }
 
             loader.style.display = 'none';
             previewImg.style.display = 'block';
@@ -1019,38 +1023,44 @@
             try {
                 shareBtn.innerText = "Preparing...";
                 
-                // If we successfully created the image blob
                 if (window.currentShareBlob) {
                     const file = new File([window.currentShareBlob], 'spikefit-badge.jpg', { type: 'image/jpeg' });
+                    const shareData = {
+                        files: [file],
+                        title: 'SpikeFit Workout Complete',
+                        text: textToShare
+                    };
 
-                    // Check if native file sharing is supported (Mobile Safari/Chrome, etc.)
+                    // Try native share API first (Mobile iOS/Android)
                     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: 'SpikeFit Workout Complete',
-                            text: textToShare
-                        });
+                        await navigator.share(shareData);
                         shareBtn.innerText = "Shared!";
                     } else {
-                        // Fallback 1: Download the image
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(window.currentShareBlob);
-                        link.download = 'spikefit-badge.jpg';
-                        link.click();
-                        shareBtn.innerText = "Image Downloaded!";
-
-                        // Fallback 2: Copy the text to clipboard
-                        const textArea = document.createElement("textarea");
-                        textArea.value = textToShare;
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(textArea);
+                        // Desktop Fallback 1: Try copying image to clipboard directly
+                        try {
+                            if (navigator.clipboard && navigator.clipboard.write) {
+                                await navigator.clipboard.write([
+                                    new ClipboardItem({ 'image/jpeg': window.currentShareBlob })
+                                ]);
+                                shareBtn.innerText = "Image Copied!";
+                                alert("Badge copied to clipboard! You can paste it into an email or app.");
+                            } else {
+                                throw new Error("Clipboard API unsupported");
+                            }
+                        } catch (clipErr) {
+                            // Desktop Fallback 2: Force standard download
+                            const link = document.createElement('a');
+                            link.href = URL.createObjectURL(window.currentShareBlob);
+                            link.download = 'spikefit-badge.jpg';
+                            link.click();
+                            shareBtn.innerText = "Downloaded!";
+                        }
                     }
                 } else {
-                    // Total fallback to just text if canvas failed
+                    // Failsafe: Blob generation failed entirely (canvas tainted). Share text only.
                     if (navigator.share) {
                         await navigator.share({ title: 'SpikeFit Workout Complete', text: textToShare });
+                        shareBtn.innerText = "Text Shared!";
                     }
                 }
             } catch (err) {
